@@ -1,0 +1,9 @@
+# Pinned to a set verified together on Python 3.12.
+# Streamlit Community Cloud defaults new apps to a newer Python; set 3.12 under
+# Advanced settings before deploying or these wheels will not resolve.
+pandas==2.2.0
+numpy==1.26.3
+matplotlib==3.8.2
+altair==6.2.2
+streamlit==1.59.2
+pytest==9.1.1

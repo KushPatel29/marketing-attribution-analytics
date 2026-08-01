@@ -1,0 +1,8 @@
+channel,customers,orders,repeat_rate_pct,orders_per_customer,revenue_per_customer
+display,355,519,31.83,1.462,161.63
+organic_search,291,431,34.02,1.481,159.98
+email,64,94,39.06,1.469,159.93
+paid_search,239,335,27.62,1.402,153.08
+direct,61,81,27.87,1.328,150.76
+affiliate,143,193,29.37,1.35,149.07
+paid_social,368,516,28.53,1.402,145.86

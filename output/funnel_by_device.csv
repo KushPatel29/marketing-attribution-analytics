@@ -1,0 +1,16 @@
+device,funnel_step,event_name,sessions,step_conversion_pct,pct_of_entry
+desktop,1,session_start,17076,,100.0
+desktop,2,product_view,10796,63.22,63.22
+desktop,3,add_to_cart,4056,37.57,23.75
+desktop,4,checkout_start,2508,61.83,14.69
+desktop,5,purchase,540,21.53,3.16
+mobile,1,session_start,29330,,100.0
+mobile,2,product_view,18617,63.47,63.47
+mobile,3,add_to_cart,6970,37.44,23.76
+mobile,4,checkout_start,3259,46.76,11.11
+mobile,5,purchase,860,26.39,2.93
+tablet,1,session_start,3876,,100.0
+tablet,2,product_view,2416,62.33,62.33
+tablet,3,add_to_cart,910,37.67,23.48
+tablet,4,checkout_start,544,59.78,14.04
+tablet,5,purchase,121,22.24,3.12

@@ -1,0 +1,8 @@
+channel,sessions,reached_product_view,reached_add_to_cart,reached_purchase,product_view_rate_pct,session_conversion_rate_pct
+email,3398,2239,968,270,65.89,7.95
+direct,6122,3933,1611,373,64.24,6.09
+paid_search,7673,4906,1908,385,63.94,5.02
+affiliate,4859,3156,1239,191,64.95,3.93
+organic_search,7534,4733,1726,164,62.82,2.18
+paid_social,9854,6200,2186,96,62.92,0.97
+display,10842,6662,2298,42,61.45,0.39

@@ -1,0 +1,7 @@
+model,paid_budget,dollars_misallocated,pct_of_budget
+last_touch,37201.88,5802.36,15.6
+position_based,37201.88,6493.9,17.46
+shapley,37201.88,7576.24,20.37
+linear,37201.88,7722.94,20.76
+markov,37201.88,8319.91,22.36
+first_touch,37201.88,11348.56,30.51

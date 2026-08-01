@@ -1,0 +1,6 @@
+funnel_step,event_name,sessions,prev_step_sessions,step_conversion_pct,pct_of_entry,sessions_lost
+1,session_start,50282,,,100.0,
+2,product_view,31829,50282.0,63.3,63.3,18453.0
+3,add_to_cart,11936,31829.0,37.5,23.74,19893.0
+4,checkout_start,6311,11936.0,52.87,12.55,5625.0
+5,purchase,1521,6311.0,24.1,3.02,4790.0

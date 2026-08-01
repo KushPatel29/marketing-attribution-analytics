@@ -1,0 +1,8 @@
+channel,true_lift,users_touched,conversions_touched,true_incremental_conversions,true_incremental_share,credit_if_last_touch_were_truth
+paid_search,0.055,6100,860,394,0.32137,
+paid_social,0.02,7100,870,179,0.146003,
+display,0.01,7543,869,99,0.08075,
+affiliate,0.03,4197,532,124,0.101142,
+email,0.045,3200,403,147,0.119902,
+organic_search,0.035,5893,775,260,0.212072,
+direct,0.005,5422,536,23,0.01876,

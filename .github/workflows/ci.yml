@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    name: Rebuild everything and re-prove every claim
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt ruff
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Generate the dataset and its ground truth
+        run: python data_generator/generate_marketing_data.py
+
+      # The committed CSVs were written on Windows. If the Linux run produces
+      # different bytes, the pipeline is not reproducible and every number in
+      # the README is a local accident.
+      - name: The regenerated data must match the committed data byte for byte
+        run: git diff --exit-code -- data/
+
+      - name: Run the committed SQL
+        run: python engine/run_analytics.py
+
+      - name: Grade every attribution model against the planted truth
+        run: python attribution/evaluate.py
+
+      - name: Read out the geo holdout
+        run: python experiments/incrementality.py
+
+      - name: Charts
+        run: python analytics/make_visuals.py
+
+      - name: Tests
+        run: python -m pytest -q
+
+      - name: The app must at least import
+        run: python -c "import ast,pathlib; ast.parse(pathlib.Path('app/streamlit_app.py').read_text())"

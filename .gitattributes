@@ -1,0 +1,4 @@
+# Generated CSVs are byte-compared across platforms in CI; keep them LF so a
+# Windows-authored artefact and a Linux-regenerated one are identical.
+* text=auto eol=lf
+*.png binary
