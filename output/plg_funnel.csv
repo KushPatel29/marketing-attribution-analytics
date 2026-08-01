@@ -1,0 +1,5 @@
+step_order,step,accounts,step_conversion_pct,pct_of_signups
+1,signup,1060,,100.0
+2,activated,563,53.11,53.11
+3,product_qualified,160,28.42,15.09
+4,became_opportunity,136,85.0,12.83

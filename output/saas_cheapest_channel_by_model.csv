@@ -1,0 +1,8 @@
+model,channel,cac,arr_per_marketing_dollar,agrees_with_truth
+TRUTH,display,12052.72,2.26,True
+first_touch,affiliate,12432.12,2.44,False
+last_touch,display,5700.46,4.77,True
+linear,affiliate,14861.56,2.04,False
+markov,affiliate,16522.32,1.84,False
+position_based,affiliate,16588.77,1.83,False
+shapley,affiliate,16068.96,1.89,False

@@ -1,0 +1,4 @@
+segment,closed_opportunities,won,win_rate_pct,won_arr,arr_win_rate_pct,avg_sales_cycle_days,avg_cycle_won,avg_cycle_lost
+Mid-Market,801,197,24.59,8354200.0,23.25,73.2,72.1,73.6
+Enterprise,246,40,16.26,7548900.0,15.96,137.6,131.4,138.8
+SMB,1734,526,30.33,6335700.0,30.06,32.9,32.4,33.1

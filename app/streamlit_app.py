@@ -61,6 +61,17 @@ try:
     retention = load("cohort_retention")
     readout = load("incrementality_readout")
     power = load("experiment_power")
+    pipeline = load("pipeline_funnel")
+    coverage = load("pipeline_coverage")
+    winrate = load("win_rate_by_segment")
+    velocity = load("stage_velocity")
+    waterfall = load("arr_waterfall")
+    retention_summary = load("retention_summary")
+    econ = load("saas_unit_economics")
+    magic = load("saas_magic_number")
+    cheapest = load("saas_cheapest_channel_by_model")
+    plg = load("plg_funnel")
+    plg_motion = load("plg_vs_sales_led")
 except FileNotFoundError:
     st.error(
         "No outputs found. Run the pipeline first:\n\n"
@@ -75,7 +86,14 @@ except FileNotFoundError:
 # hidden tab are measured while their container has zero width, so every
 # section except the one active on first load rendered as an empty box. A radio
 # puts only the selected section in the DOM, so everything measures correctly.
-SECTIONS = ["🎯 Attribution vs truth", "🔻 Funnel", "👥 Cohorts & LTV", "🧪 The experiment"]
+SECTIONS = [
+    "🎯 Attribution vs truth",
+    "🔻 Funnel",
+    "👥 Cohorts & LTV",
+    "🧪 The experiment",
+    "💼 SaaS pipeline & retention",
+    "💰 Unit economics",
+]
 section = st.radio("Section", SECTIONS, horizontal=True, label_visibility="collapsed")
 st.divider()
 
@@ -326,9 +344,173 @@ if section == SECTIONS[3]:
         "conversion rate by 8 basis points — real, and out of reach here."
     )
 
+# --------------------------------------------------- section: SaaS pipeline
+if section == SECTIONS[4]:
+    st.subheader("Act two — a B2B SaaS go-to-market motion")
+    st.caption(
+        "CRM-shaped: accounts, opportunities walking a stage ladder, an ARR "
+        "movement ledger. These metrics exist because revenue recurs and a "
+        "conversion takes months — neither of which is true in act one."
+    )
+
+    smb = coverage[coverage["segment"] == "SMB"].iloc[0]
+    ent = coverage[coverage["segment"] == "Enterprise"].iloc[0]
+    c1, c2, c3 = st.columns(3)
+    c1.metric("SMB coverage", f"{smb['coverage_ratio']:.2f}x",
+              f"needs {smb['required_coverage']:.2f}x", delta_color="off")
+    c2.metric("Enterprise coverage", f"{ent['coverage_ratio']:.2f}x",
+              f"needs {ent['required_coverage']:.2f}x", delta_color="off")
+    # Escaped: Streamlit renders an unescaped $...$ pair as inline LaTeX.
+    c3.metric("Ending ARR", f"\\${waterfall['ending_arr'].iloc[-1]:,.0f}")
+
+    st.info(
+        "**The 3x rule gets SMB backwards.** Required coverage falls out of a "
+        "segment's own win rate and cycle length: SMB needs 1.19x and has 1.60x, "
+        "so it is fine — while the blended heuristic calls it short. Enterprise "
+        "needs more than nine.",
+        icon=":material/rule:",
+    )
+    st.dataframe(
+        coverage[["segment", "win_rate_pct", "avg_cycle_days", "coverage_ratio",
+                  "required_coverage", "coverage_verdict", "verdict_under_3x_rule"]],
+        width="stretch", hide_index=True,
+    )
+
+    st.subheader("Pipeline funnel")
+    pf = pipeline.sort_values("stage_order")
+    st.altair_chart(
+        alt.Chart(pf).mark_bar(color=NAVY).encode(
+            y=alt.Y("stage_name:N", sort=pf["stage_name"].tolist(), title=None),
+            x=alt.X("opportunities:Q", title="opportunities reaching stage"),
+            tooltip=["stage_name", "opportunities", "stage_conversion_pct"],
+        ).properties(height=250),
+        width="stretch",
+    )
+
+    left, right = st.columns(2)
+    with left:
+        st.subheader("Win rate and cycle by segment")
+        st.dataframe(
+            winrate[["segment", "win_rate_pct", "avg_cycle_won", "won_arr"]],
+            width="stretch", hide_index=True,
+        )
+    with right:
+        st.subheader("Slowest stages")
+        st.caption("The Enterprise bottleneck is getting in the room, not closing.")
+        st.dataframe(
+            velocity.sort_values("avg_days_in_stage", ascending=False)
+            .head(6)[["segment", "stage_name", "avg_days_in_stage"]],
+            width="stretch", hide_index=True,
+        )
+
+    st.subheader("ARR waterfall")
+    long_w = waterfall.melt(
+        id_vars=["movement_month"],
+        value_vars=["new_arr", "expansion_arr", "contraction_arr", "churn_arr"],
+        var_name="movement", value_name="arr",
+    )
+    st.altair_chart(
+        alt.Chart(long_w).mark_bar().encode(
+            x=alt.X("movement_month:T", title=None),
+            y=alt.Y("arr:Q", title="ARR movement ($)", stack="zero"),
+            color=alt.Color("movement:N", title=None,
+                            scale=alt.Scale(range=[NAVY, TEAL, "#E8A33D", ORANGE])),
+            tooltip=["movement_month", "movement", "arr"],
+        ).properties(height=320),
+        width="stretch",
+    )
+
+    st.subheader("Net vs gross revenue retention")
+    st.caption(
+        "NRR counts expansion; GRR does not. Enterprise clears 100% net while "
+        "losing 16% gross — quoting only NRR answers a question nobody asked."
+    )
+    st.dataframe(
+        retention_summary[["segment", "nrr_pct", "grr_pct", "logo_churn_pct",
+                           "dollar_churn_pct"]],
+        width="stretch", hide_index=True,
+    )
+
+    st.subheader("Product-led funnel")
+    a_col, b_col = st.columns([2, 3])
+    with a_col:
+        st.dataframe(plg[["step", "accounts", "step_conversion_pct"]],
+                     width="stretch", hide_index=True)
+    with b_col:
+        st.dataframe(
+            plg_motion[["motion", "opportunities", "win_rate_pct", "avg_cycle_days"]],
+            width="stretch", hide_index=True,
+        )
+        st.caption(
+            "Product-qualified accounts win far better — but they self-select, so "
+            "the gap overstates the causal effect. Nobody randomised anything here."
+        )
+
+# ------------------------------------------------- section: unit economics
+if section == SECTIONS[5]:
+    st.subheader("Does the motion pay for itself?")
+    worst_seg = econ.sort_values("ltv_to_cac").iloc[0]
+    best_seg = econ.sort_values("ltv_to_cac").iloc[-1]
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric(f"{best_seg['segment']} LTV:CAC", f"{best_seg['ltv_to_cac']:.2f}",
+              f"payback {best_seg['cac_payback_months']:.1f} mo", delta_color="off")
+    c2.metric(f"{worst_seg['segment']} LTV:CAC", f"{worst_seg['ltv_to_cac']:.2f}",
+              f"payback {worst_seg['cac_payback_months']:.1f} mo", delta_color="inverse")
+    c3.metric("Magic number (latest quarter)", f"{magic['magic_number'].iloc[-1]:.2f}")
+
+    st.warning(
+        f"**{worst_seg['segment']} has the fastest cycle, the highest win rate and "
+        f"the healthiest coverage in the business — and an LTV:CAC of "
+        f"{worst_seg['ltv_to_cac']:.2f}.** Every operational metric says it is the "
+        f"best-run segment. The unit economics say it should probably not exist.",
+        icon=":material/warning:",
+    )
+    st.dataframe(
+        econ[["segment", "new_customers", "cac", "cac_payback_months",
+              "annual_dollar_churn_pct", "ltv", "ltv_to_cac", "ltv_cac_verdict"]],
+        width="stretch", hide_index=True,
+    )
+
+    st.subheader("Where act one and act two collide")
+    st.caption(
+        "Marketing spend sits in the denominator of every number above, so the "
+        "attribution model you believe decides which channel looks fundable. "
+        "Paid channels only — you cannot have a cost per acquisition for a "
+        "channel nobody bought."
+    )
+    st.dataframe(
+        cheapest[["model", "channel", "cac", "arr_per_marketing_dollar",
+                  "agrees_with_truth"]],
+        width="stretch", hide_index=True,
+    )
+    disagree = int((~cheapest.loc[cheapest["model"] != "TRUTH", "agrees_with_truth"]).sum())
+    st.caption(
+        f"{disagree} of 6 models name a different cheapest channel than the truth. "
+        "The one that agrees is last-touch — the worst model in act one — and it "
+        "gets there by undercrediting display so hard that almost no budget is "
+        "allocated to it. A right answer from a broken mechanism."
+    )
+
+    st.subheader("Magic number by quarter")
+    st.altair_chart(
+        alt.Chart(magic).mark_bar(color=TEAL).encode(
+            x=alt.X("quarter:N", title=None),
+            y=alt.Y("magic_number:Q", title="net new ARR per $ of prior-quarter S&M"),
+            tooltip=["quarter", "net_new_arr", "prior_quarter_sm_cost",
+                     "magic_number", "verdict"],
+        ).properties(height=280),
+        width="stretch",
+    )
+    st.caption(
+        "Deliberately not multiplied by four: the textbook formula annualises a "
+        "quarterly revenue delta, and net new ARR is already annual."
+    )
+
 st.divider()
 st.caption(
-    "All data synthetic (seed "
-    f"{C.SEED}). Ground truth is computed by counterfactual re-simulation, not assumed. "
+    "All data synthetic (seeds "
+    f"{C.SEED} and {C.SAAS_SEED}). Ground truth is computed by counterfactual "
+    "re-simulation, not assumed. "
     "Source: github.com/KushPatel29/marketing-attribution-analytics"
 )

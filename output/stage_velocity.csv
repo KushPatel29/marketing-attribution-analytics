@@ -1,0 +1,16 @@
+stage_name,stage_order,segment,times_entered,avg_days_in_stage,max_days_in_stage
+Prospecting,1,Enterprise,339,50.2,234
+Discovery,2,Enterprise,322,41.3,255
+Demo,3,Enterprise,251,36.6,178
+Proposal,4,Enterprise,186,32.2,190
+Negotiation,5,Enterprise,110,25.6,118
+Prospecting,1,Mid-Market,990,23.9,129
+Discovery,2,Mid-Market,946,22.2,107
+Demo,3,Mid-Market,756,17.9,97
+Proposal,4,Mid-Market,552,15.4,83
+Negotiation,5,Mid-Market,380,15.2,78
+Prospecting,1,SMB,1887,9.8,58
+Discovery,2,SMB,1854,8.8,51
+Demo,3,SMB,1538,8.0,43
+Proposal,4,SMB,1204,6.3,36
+Negotiation,5,SMB,844,6.5,37

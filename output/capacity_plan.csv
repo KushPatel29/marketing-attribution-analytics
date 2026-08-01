@@ -1,0 +1,4 @@
+segment,reps_in_seat,observed_arr_per_rep,avg_attainment_pct,total_annual_quota,reps_required_at_observed_productivity,hiring_gap
+Enterprise,8,943612.5,86.97,4960000.0,6,-2
+Mid-Market,8,1044275.0,85.73,5568000.0,6,-2
+SMB,8,791962.5,85.71,4224000.0,6,-2

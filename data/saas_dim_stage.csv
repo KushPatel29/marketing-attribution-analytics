@@ -1,0 +1,8 @@
+stage_id,stage_name,stage_order,is_closed,is_won
+1,Prospecting,1,0,0
+2,Discovery,2,0,0
+3,Demo,3,0,0
+4,Proposal,4,0,0
+5,Negotiation,5,0,0
+6,Closed Won,6,1,1
+7,Closed Lost,7,1,0

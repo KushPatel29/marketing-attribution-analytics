@@ -1,0 +1,4 @@
+segment,reps,quarterly_quota,open_opportunities,open_pipeline_arr,coverage_ratio,win_rate_pct,avg_cycle_days,weighted_pipeline_arr,required_coverage,coverage_verdict,verdict_under_3x_rule
+SMB,8,1056000.0,153,1693000.0,1.6,30.33,32.9,513562.86,1.19,covered,short
+Mid-Market,8,1392000.0,189,8975600.0,6.45,24.59,73.2,2207482.15,3.27,covered,covered
+Enterprise,8,1240000.0,93,16650000.0,13.43,16.26,137.6,2707317.07,9.3,covered,covered

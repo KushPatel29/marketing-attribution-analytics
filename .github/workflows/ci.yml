@@ -28,6 +28,9 @@ jobs:
       - name: Generate the dataset and its ground truth
         run: python data_generator/generate_marketing_data.py
 
+      - name: Generate the B2B SaaS go-to-market dataset
+        run: python saas/generate_gtm_data.py
+
       # The committed CSVs were written on Windows. If the Linux run produces
       # different bytes, the pipeline is not reproducible and every number in
       # the README is a local accident.
@@ -42,6 +45,9 @@ jobs:
 
       - name: Read out the geo holdout
         run: python experiments/incrementality.py
+
+      - name: SaaS unit economics, magic number, CAC by attribution model
+        run: python saas/gtm_metrics.py
 
       - name: Charts
         run: python analytics/make_visuals.py

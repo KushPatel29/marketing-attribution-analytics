@@ -1,0 +1,21 @@
+loss_reason,competitor,losses,arr_lost,pct_of_lost_arr
+Price,Kestrel,102,5213400.0,6.35
+No decision,Northwind,120,4735300.0,5.77
+Lost to status quo,Kestrel,121,4664300.0,5.68
+Timing,Helioscope,106,4614100.0,5.62
+Competitor,Kestrel,108,4510500.0,5.5
+Price,Helioscope,88,4426100.0,5.39
+Competitor,Northwind,97,4366300.0,5.32
+Lost to status quo,Helioscope,102,4356600.0,5.31
+Price,(none),100,4348700.0,5.3
+Timing,(none),95,4222600.0,5.15
+No decision,Helioscope,103,4120700.0,5.02
+Price,Northwind,98,4096600.0,4.99
+Timing,Northwind,111,3975000.0,4.84
+Timing,Kestrel,88,3942300.0,4.8
+Competitor,(none),107,3624300.0,4.42
+Lost to status quo,Northwind,87,3549300.0,4.33
+No decision,(none),89,3431900.0,4.18
+Competitor,Helioscope,93,3378000.0,4.12
+No decision,Kestrel,96,3291200.0,4.01
+Lost to status quo,(none),107,3193900.0,3.89

@@ -1,0 +1,4 @@
+segment,new_customers,new_arr,allocated_sm_cost,cac,arr_per_customer,cac_payback_months,annual_dollar_churn_pct,ltv,ltv_to_cac,payback_verdict,ltv_cac_verdict
+Enterprise,40,7548900.0,8992383.11,224809.58,188722.5,18.3,14.42,1020829.06,4.54,slow,healthy
+Mid-Market,197,8354200.0,11299639.61,57358.58,42407.11,20.8,28.39,116511.25,2.03,slow,thin
+SMB,526,6335700.0,13755614.3,26151.36,12045.06,33.4,42.71,21997.53,0.84,slow,thin

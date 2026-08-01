@@ -20,9 +20,11 @@ sys.path.insert(0, str(ROOT))
 
 STAGES = [
     "data_generator/generate_marketing_data.py",
+    "saas/generate_gtm_data.py",
     "engine/run_analytics.py",
     "attribution/evaluate.py",
     "experiments/incrementality.py",
+    "saas/gtm_metrics.py",
 ]
 
 

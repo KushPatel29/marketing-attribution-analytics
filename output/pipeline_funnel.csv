@@ -1,0 +1,6 @@
+stage_order,stage_name,opportunities,arr_reaching_stage,prev_stage_opportunities,stage_conversion_pct,pct_of_created
+1,Prospecting,3216,131618500.0,,,100.0
+2,Discovery,3122,126291500.0,3216.0,97.08,97.08
+3,Demo,2545,100071800.0,3122.0,81.52,79.14
+4,Proposal,1942,75323700.0,2545.0,76.31,60.39
+5,Negotiation,1334,47480700.0,1942.0,68.69,41.48

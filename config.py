@@ -108,6 +108,97 @@ EXPERIMENT_HOLDOUT_GEOS = [f"GEO-{i:02d}" for i in range(2, 21, 2)]  # 10 of 20
 # 14,000-user sample of the same business. Different grains on purpose — this
 # is how the two analyses are actually sourced in practice.
 
+# ==========================================================================
+# ACT TWO — the same questions asked of a B2B SaaS go-to-market motion
+# ==========================================================================
+# Act one is e-commerce: a session converts or it doesn't, and the money
+# arrives once. A SaaS motion breaks both assumptions. Revenue is recurring,
+# so a customer can be worth more next year than this one; and a "conversion"
+# is a months-long opportunity moving through stages, owned by a rep carrying
+# a quota. Almost every GTM metric that matters exists because of those two
+# differences, so the second dataset models them directly.
+
+SAAS_SEED = 88
+SAAS_START = "2024-07-01"
+SAAS_MONTHS = 24
+N_ACCOUNTS = 2_600
+
+SEGMENTS = {
+    # segment -> (share of accounts, mean new-business ARR, win rate, sales-cycle days)
+    "SMB":         {"share": 0.55, "arr_mean": 11_000,  "win_rate": 0.28, "cycle_days": 34},
+    "Mid-Market":  {"share": 0.33, "arr_mean": 42_000,  "win_rate": 0.22, "cycle_days": 76},
+    "Enterprise":  {"share": 0.12, "arr_mean": 168_000, "win_rate": 0.17, "cycle_days": 148},
+}
+
+# Salesforce-shaped stage ladder. `is_closed` / `is_won` mirror the standard
+# OpportunityStage fields so the SQL reads the way it would against a real CRM.
+SAAS_STAGES = [
+    ("Prospecting",     1, False, False),
+    ("Discovery",       2, False, False),
+    ("Demo",            3, False, False),
+    ("Proposal",        4, False, False),
+    ("Negotiation",     5, False, False),
+    ("Closed Won",      6, True,  True),
+    ("Closed Lost",     7, True,  False),
+]
+
+LOSS_REASONS = ["Price", "Competitor", "No decision", "Lost to status quo", "Timing"]
+COMPETITORS = ["Northwind", "Helioscope", "Kestrel", "(none)"]
+INDUSTRIES = ["SaaS", "Manufacturing", "Retail", "Healthcare", "Financial services", "Logistics"]
+
+N_TERRITORIES = 8
+REP_RAMP_MONTHS = 4          # a new rep carries a reduced quota while ramping
+
+# Quotas are set from the productivity the simulation actually produces, so
+# blended attainment lands near 85% -- roughly where a real sales org sits.
+# Setting them by wishful thinking instead is how you get a capacity plan that
+# says every rep is failing, which is a modelling error dressed as a finding.
+QUOTA_PER_REP = {"SMB": 528_000, "Mid-Market": 696_000, "Enterprise": 620_000}
+
+# How many opportunities an account generates, by segment. SMB reps run many
+# small fast deals; Enterprise reps run few large slow ones, and that ratio is
+# most of why the two motions cannot share a dashboard.
+OPPS_PER_ACCOUNT = {"SMB": 2.6, "Mid-Market": 1.5, "Enterprise": 1.2}
+
+# Lead creation grows through the window. A flat rate would leave almost no
+# deals in flight at the end, and pipeline coverage would read near zero for
+# reasons that are an artefact of the window rather than the business.
+LEAD_GROWTH_PER_MONTH = 0.045
+
+# Product-qualified accounts really do convert better here -- planted, so the
+# PLG-versus-sales-led comparison is measuring something. The README still says
+# out loud that self-serve accounts self-select, so the observed gap overstates
+# the causal one.
+PQL_WIN_RATE_MULTIPLIER = 1.45
+
+# Renewal-time behaviour, applied per subscription anniversary.
+RENEWAL = {
+    "SMB":        {"churn": 0.22, "contract": 0.09, "expand": 0.24, "expand_pct": 0.18},
+    "Mid-Market": {"churn": 0.12, "contract": 0.07, "expand": 0.34, "expand_pct": 0.22},
+    "Enterprise": {"churn": 0.06, "contract": 0.05, "expand": 0.44, "expand_pct": 0.27},
+}
+
+# Product-led motion running alongside sales: self-serve signup, then the
+# activation event, then the usage threshold that makes an account a PQL.
+# The book of business already on the shelf when the reporting window opens.
+# Net revenue retention is a statement about existing customers, so without
+# a starting base it would be computed over a handful of accidents.
+N_LEGACY_SUBSCRIPTIONS = 260
+
+PLG_SIGNUP_RATE = 0.42        # share of accounts that arrive self-serve first
+PLG_ACTIVATION_RATE = 0.51    # of signups, reach the activation milestone
+PLG_PQL_RATE = 0.29           # of activated, cross the qualification threshold
+PLG_PQL_TO_OPP = 0.61         # of PQLs, become a sales opportunity
+
+# Sales & marketing cost, used for CAC payback and the magic number. Split so
+# the marketing half can be re-cut by the attribution models from act one.
+# Fully loaded per quota-carrying rep: their comp plus the SDR, sales
+# engineering, management and tooling that sit behind them. Costing a rep at
+# base salary alone is the single most common way a CAC comes out flattering.
+SALES_COST_PER_REP_MONTH = 46_000
+MARKETING_COST_PER_MONTH = 265_000
+GROSS_MARGIN_SAAS = 0.78
+
 # ------------------------------------------------------------------- paths
 from pathlib import Path  # noqa: E402
 

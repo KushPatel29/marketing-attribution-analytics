@@ -32,6 +32,18 @@ TABLES = [
     "fact_orders",
     "fact_spend",
     "ground_truth_incrementality",
+    # Act two: the B2B SaaS go-to-market tables.
+    "saas_dim_stage",
+    "saas_dim_territory",
+    "saas_dim_rep",
+    "saas_dim_account",
+    "saas_fact_lead",
+    "saas_fact_opportunity",
+    "saas_fact_stage_history",
+    "saas_fact_subscription",
+    "saas_fact_arr_movement",
+    "saas_fact_plg",
+    "saas_fact_sm_cost",
 ]
 
 # 01 is DDL for reference; the loader creates the tables from the dataframes,
@@ -41,6 +53,10 @@ ANALYSIS_FILES = [
     "03_cohorts_ltv.sql",
     "04_channel_efficiency.sql",
     "05_attribution_heuristics.sql",
+    "06_pipeline.sql",
+    "07_saas_revenue.sql",
+    "08_rep_productivity.sql",
+    "09_plg_funnel.sql",
 ]
 
 # Tables produced by the SQL that are worth exporting for the app and the tests.
@@ -57,6 +73,21 @@ EXPORTS = [
     "attribution_heuristics",
     "channel_journey_roles",
     "journey_length_distribution",
+    "pipeline_funnel",
+    "stage_velocity",
+    "win_rate_by_segment",
+    "loss_analysis",
+    "pipeline_coverage",
+    "arr_waterfall",
+    "revenue_retention",
+    "retention_summary",
+    "new_arr_by_channel",
+    "rep_attainment",
+    "territory_performance",
+    "capacity_plan",
+    "plg_funnel",
+    "time_to_value",
+    "plg_vs_sales_led",
 ]
 
 
@@ -73,6 +104,8 @@ def load_warehouse() -> sqlite3.Connection:
     # Attribution queries hit fact_sessions by user repeatedly.
     con.execute("CREATE INDEX ix_sessions_user ON fact_sessions(user_id)")
     con.execute("CREATE INDEX ix_events_session ON fact_events(session_id)")
+    con.execute("CREATE INDEX ix_stage_hist_opp ON saas_fact_stage_history(opportunity_id)")
+    con.execute("CREATE INDEX ix_opp_account ON saas_fact_opportunity(account_id)")
     return con
 
 
