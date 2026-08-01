@@ -9,6 +9,8 @@
 ![Tests](https://img.shields.io/badge/tests-60%20passing-3B8C6E)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
+**▶ Live demo: [attribution-vs-truth.streamlit.app](https://attribution-vs-truth.streamlit.app)**
+
 **All data is synthetic** — 14,000 user journeys, 50,282 sessions, 101,879 funnel
 events, 2,169 orders, generated from a fixed seed. No real company, customer,
 campaign, or spend figure appears anywhere.
