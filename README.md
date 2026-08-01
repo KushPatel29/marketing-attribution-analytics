@@ -3,7 +3,7 @@
 ### *Every attribution argument I have sat through was unfalsifiable, because nobody in the room knew the right answer. So I built a dataset where I do.*
 
 [![CI](https://github.com/KushPatel29/marketing-attribution-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/marketing-attribution-analytics/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-88%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-90%20passing-3B8C6E)
 ![Python](https://img.shields.io/badge/Python-pandas%20%2B%20numpy-3776AB?logo=python&logoColor=white)
 ![SQL](https://img.shields.io/badge/SQL-9%20files%2C%20run%20verbatim-CC2927)
 ![Causal](https://img.shields.io/badge/Causal-geo%20holdout%20%2B%20DiD-6A4C93)
@@ -537,7 +537,7 @@ python experiments/incrementality.py               # the geo holdout
 python saas/gtm_metrics.py                         # CAC payback, magic number, LTV:CAC
 python analytics/make_visuals.py                   # docs/ charts
 
-python -m pytest -q                                # 88 tests
+python -m pytest -q                                # 90 tests
 streamlit run app/streamlit_app.py                 # the console
 ```
 
