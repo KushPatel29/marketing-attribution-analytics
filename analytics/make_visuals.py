@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import config as C  # noqa: E402
 
 NAVY, TEAL, ORANGE, GREY = "#12436D", "#28A197", "#F46A25", "#A8B0B8"
+AMBER, INK = "#E8A33D", "#12233A"
 plt.rcParams.update(
     {
         "figure.dpi": 130,
@@ -180,6 +181,85 @@ def chart_experiment(readout: pd.DataFrame, true_lift: float) -> None:
     _save(fig, "06-incrementality.png")
 
 
+# ============================ act two: B2B SaaS go-to-market ================
+def chart_coverage(cov: pd.DataFrame) -> None:
+    """Actual coverage against what each segment's own economics require."""
+    d = cov.sort_values("required_coverage")
+    x = np.arange(len(d))
+    w = 0.36
+    fig, ax = plt.subplots(figsize=(7.6, 3.8))
+    ax.bar(x - w / 2, d["coverage_ratio"], w, label="actual coverage", color=NAVY)
+    ax.bar(x + w / 2, d["required_coverage"], w, label="required by its own economics",
+           color=TEAL)
+    ax.axhline(3.0, color=ORANGE, ls="--", lw=1.6)
+    ax.text(len(d) - 0.45, 3.25, 'the "3x rule"', color=ORANGE, fontsize=8.5, ha="right")
+    for i, (a, r) in enumerate(zip(d["coverage_ratio"], d["required_coverage"], strict=True)):
+        ax.text(i - w / 2, a + 0.25, f"{a:.2f}x", ha="center", fontsize=8)
+        ax.text(i + w / 2, r + 0.25, f"{r:.2f}x", ha="center", fontsize=8)
+    ax.set_xticks(x)
+    ax.set_xticklabels(d["segment"])
+    ax.set_ylabel("pipeline coverage")
+    ax.legend(frameon=False, fontsize=8)
+    ax.set_title(
+        "The 3x rule calls SMB short when its own maths says it is fine.",
+        loc="left", fontsize=10, weight="bold",
+    )
+    _save(fig, "08-pipeline-coverage.png")
+
+
+def chart_arr_waterfall(w: pd.DataFrame) -> None:
+    """Monthly ARR movement, stacked, with ending ARR on a second axis."""
+    d = w.copy()
+    d["month"] = pd.to_datetime(d["movement_month"])
+    fig, ax = plt.subplots(figsize=(9.2, 4))
+    ax.bar(d["month"], d["new_arr"], 22, label="new", color=NAVY)
+    ax.bar(d["month"], d["expansion_arr"], 22, bottom=d["new_arr"],
+           label="expansion", color=TEAL)
+    ax.bar(d["month"], d["contraction_arr"], 22, label="contraction", color=AMBER)
+    ax.bar(d["month"], d["churn_arr"], 22, bottom=d["contraction_arr"],
+           label="churn", color=ORANGE)
+    ax.axhline(0, color=INK, lw=0.8)
+    ax.set_ylabel("ARR movement ($)")
+    ax.legend(frameon=False, ncols=4, fontsize=8, loc="upper left")
+
+    ax2 = ax.twinx()
+    ax2.plot(d["month"], d["ending_arr"], color=GREY, lw=2)
+    ax2.set_ylabel("ending ARR ($)", color=GREY)
+    ax2.tick_params(axis="y", colors=GREY)
+    ax2.grid(False)
+    ax.set_title(
+        "Every retention metric is an aggregation of these four movements.",
+        loc="left", fontsize=10, weight="bold",
+    )
+    _save(fig, "09-arr-waterfall.png")
+
+
+def chart_unit_economics(econ: pd.DataFrame) -> None:
+    """The finding: the best-run segment is the one that does not pay back."""
+    d = econ.sort_values("ltv_to_cac", ascending=False)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 3.6))
+
+    colors = [TEAL if v >= 3 else ORANGE for v in d["ltv_to_cac"]]
+    ax1.bar(d["segment"], d["ltv_to_cac"], color=colors)
+    ax1.axhline(3.0, color=GREY, ls="--", lw=1.4)
+    ax1.text(2.45, 3.15, "healthy = 3.0", color=GREY, fontsize=8, ha="right")
+    for i, v in enumerate(d["ltv_to_cac"]):
+        ax1.text(i, v + 0.12, f"{v:.2f}", ha="center", fontsize=9, weight="bold")
+    ax1.set_ylabel("LTV : CAC")
+    ax1.set_ylim(0, max(d["ltv_to_cac"]) * 1.25)
+    ax1.set_title("Return on a customer", loc="left", fontsize=10, weight="bold")
+
+    pay = [TEAL if v <= 24 else ORANGE for v in d["cac_payback_months"]]
+    ax2.bar(d["segment"], d["cac_payback_months"], color=pay)
+    for i, v in enumerate(d["cac_payback_months"]):
+        ax2.text(i, v + 0.7, f"{v:.1f}", ha="center", fontsize=9, weight="bold")
+    ax2.set_ylabel("CAC payback (months)")
+    ax2.set_ylim(0, max(d["cac_payback_months"]) * 1.25)
+    ax2.set_title("Months to earn the acquisition back", loc="left",
+                  fontsize=10, weight="bold")
+    _save(fig, "10-unit-economics.png")
+
+
 def main() -> None:
     cmp_df = pd.read_csv(C.OUT / "attribution_comparison.csv")
     scores = pd.read_csv(C.OUT / "attribution_scores.csv")
@@ -189,6 +269,9 @@ def main() -> None:
     by_device = pd.read_csv(C.OUT / "funnel_by_device.csv")
     ltv = pd.read_csv(C.OUT / "cohort_ltv.csv")
     readout = pd.read_csv(C.OUT / "incrementality_readout.csv")
+    coverage = pd.read_csv(C.OUT / "pipeline_coverage.csv")
+    waterfall = pd.read_csv(C.OUT / "arr_waterfall.csv")
+    econ = pd.read_csv(C.OUT / "saas_unit_economics.csv")
 
     print("Writing charts")
     chart_attribution(cmp_df)
@@ -197,6 +280,9 @@ def main() -> None:
     chart_funnel(funnel, by_device)
     chart_ltv(ltv)
     chart_experiment(readout, C.CHANNELS[C.EXPERIMENT_CHANNEL]["true_lift"])
+    chart_coverage(coverage)
+    chart_arr_waterfall(waterfall)
+    chart_unit_economics(econ)
 
 
 if __name__ == "__main__":
