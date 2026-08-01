@@ -8,11 +8,20 @@ test suite asserts on — so anything shown here is a number CI has already
 checked. Nothing is recomputed in the UI layer, because a dashboard that
 re-derives its own metrics is a second implementation waiting to disagree
 with the first.
+
+That extends to configuration. This module imports nothing from the project —
+not even `config`. Streamlit re-executes the script on every interaction but
+keeps `sys.modules` between runs, so after a deploy the new script can run
+against a *previously imported* module and fail on a constant that was added in
+the same commit. It did exactly that once, on the deployed app, with a traceback
+pointing at a value sitting in plain sight in `config.py`.
+
+The few scalars the console needs are written to `output/run_metadata.csv` by
+the pipeline instead, and a test enforces that no project import creeps back in.
 """
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import altair as alt
@@ -20,9 +29,6 @@ import pandas as pd
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
-
-import config as C  # noqa: E402
 
 st.set_page_config(page_title="Marketing Attribution", page_icon="📈", layout="wide")
 
@@ -72,6 +78,8 @@ try:
     cheapest = load("saas_cheapest_channel_by_model")
     plg = load("plg_funnel")
     plg_motion = load("plg_vs_sales_led")
+    meta = load("run_metadata").iloc[0]
+    truth = load("ground_truth_incrementality", "data").set_index("channel")
 except FileNotFoundError:
     st.error(
         "No outputs found. Run the pipeline first:\n\n"
@@ -299,9 +307,10 @@ if section == SECTIONS[3]:
     did = readout[readout["estimator"].str.startswith("difference")].iloc[0]
     naive = readout[readout["estimator"].str.startswith("naive")].iloc[0]
     p = power.iloc[0]
-    true_lift = C.CHANNELS[C.EXPERIMENT_CHANNEL]["true_lift"]
+    experiment_channel = str(meta["experiment_channel"])
+    true_lift = float(truth.loc[experiment_channel, "true_lift"])
 
-    st.subheader(f"Geo holdout on {C.EXPERIMENT_CHANNEL}")
+    st.subheader(f"Geo holdout on {experiment_channel}")
     c1, c2, c3 = st.columns(3)
     c1.metric("Planted truth", f"{100 * true_lift:.2f}%")
     c2.metric("Difference-in-differences", f"{100 * did['estimated_lift']:.2f}%",
@@ -326,11 +335,13 @@ if section == SECTIONS[3]:
     st.dataframe(
         pd.DataFrame(
             [
-                {"channel": "paid_search", "true_lift": C.CHANNELS["paid_search"]["true_lift"],
+                {"channel": "paid_search",
+                 "true_lift": float(truth.loc["paid_search", "true_lift"]),
                  "sessions_needed_per_arm": int(p["required_n_paid_search"]),
                  "testable at this traffic": int(p["required_n_paid_search"])
                  <= int(p["sessions_treated_arm"])},
-                {"channel": "paid_social", "true_lift": C.CHANNELS["paid_social"]["true_lift"],
+                {"channel": "paid_social",
+                 "true_lift": float(truth.loc["paid_social", "true_lift"]),
                  "sessions_needed_per_arm": int(p["required_n_paid_social"]),
                  "testable at this traffic": int(p["required_n_paid_social"])
                  <= int(p["sessions_treated_arm"])},
@@ -510,7 +521,7 @@ if section == SECTIONS[5]:
 st.divider()
 st.caption(
     "All data synthetic (seeds "
-    f"{C.SEED} and {C.SAAS_SEED}). Ground truth is computed by counterfactual "
-    "re-simulation, not assumed. "
+    f"{meta['seed']} and {meta['saas_seed']}). Ground truth is computed by "
+    "counterfactual re-simulation, not assumed. "
     "Source: github.com/KushPatel29/marketing-attribution-analytics"
 )

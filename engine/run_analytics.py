@@ -126,12 +126,35 @@ def export(con: sqlite3.Connection) -> dict[str, pd.DataFrame]:
     return out
 
 
+def write_run_metadata() -> None:
+    """
+    The handful of scalars the console needs that are not already in a table.
+
+    The app used to `import config` for these. That made a Streamlit rerun able
+    to crash: Streamlit re-executes the script on every interaction but keeps
+    `sys.modules` between runs, so after a deploy the new script ran against
+    the *previously imported* config module and blew up on a constant that had
+    been added in the same commit. Writing them out means the console reads
+    only files the pipeline produced, which is what its docstring always
+    claimed and is now enforced by a test.
+    """
+    C.OUT.mkdir(parents=True, exist_ok=True)
+    pd.DataFrame(
+        [{
+            "seed": C.SEED,
+            "saas_seed": C.SAAS_SEED,
+            "experiment_channel": C.EXPERIMENT_CHANNEL,
+        }]
+    ).to_csv(C.OUT / "run_metadata.csv", index=False, lineterminator="\n")
+
+
 def main() -> None:
     print("Loading warehouse")
     con = load_warehouse()
     print("Executing sql/")
     run_sql_files(con)
     tables = export(con)
+    write_run_metadata()
     print(f"\nWrote {len(tables)} tables to output/")
 
     eff = tables["channel_efficiency"]

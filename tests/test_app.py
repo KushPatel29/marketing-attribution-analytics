@@ -37,15 +37,55 @@ def test_app_does_not_use_tabs():
     assert not calls, "st.tabs zero-widths charts in inactive tabs — use the radio"
 
 
-def test_app_reads_only_committed_outputs():
+def test_app_imports_nothing_from_the_project():
     """
-    The app must not recompute metrics; it reads CSVs the pipeline wrote and the
-    tests assert on. If it starts importing the engine, a second implementation
-    has appeared and the two can disagree.
+    The app reads files; it does not import project code — not the engine, not
+    the models, and *not* `config`.
+
+    The engine rule is about duplication: a second implementation of a metric
+    can disagree with the first. The `config` rule is about deployment, and it
+    was learned the hard way. Streamlit re-executes the script on every
+    interaction but keeps `sys.modules` across runs, so after a deploy the new
+    script ran against the config module imported by the *previous* version and
+    raised AttributeError on a constant that was right there in the file. The
+    scalars now come from output/run_metadata.csv.
+
+    Checked on the AST so a mention in a comment or docstring — like the one
+    above — cannot trip it.
+    """
+    tree = ast.parse(APP.read_text(encoding="utf-8"))
+    project = {"config", "engine", "attribution", "experiments", "saas", "analytics",
+               "data_generator"}
+    imported: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            imported.update(a.name.split(".")[0] for a in node.names)
+        elif isinstance(node, ast.ImportFrom) and node.module:
+            imported.add(node.module.split(".")[0])
+    leaked = imported & project
+    assert not leaked, f"app imports project code: {sorted(leaked)}"
+
+
+def test_app_does_not_manipulate_sys_path():
+    """
+    The sys.path.insert existed only to make `import config` work. With the
+    import gone the path hack is dead weight, and leaving it invites the import
+    back.
     """
     src = APP.read_text(encoding="utf-8")
-    for forbidden in ("from engine", "from attribution", "from experiments", "import engine"):
-        assert forbidden not in src, f"app imports pipeline code: {forbidden}"
+    assert "sys.path" not in src
+
+
+def test_run_metadata_carries_what_the_app_needs():
+    """The pipeline must actually write the scalars the console now depends on."""
+    import csv
+
+    path = ROOT / "output" / "run_metadata.csv"
+    assert path.exists(), "pipeline did not write output/run_metadata.csv"
+    row = next(iter(csv.DictReader(path.open(encoding="utf-8"))))
+    assert {"seed", "saas_seed", "experiment_channel"} <= set(row)
+    assert row["experiment_channel"]
+    assert int(row["seed"]) and int(row["saas_seed"])
 
 
 def test_every_csv_the_app_loads_is_committed():
