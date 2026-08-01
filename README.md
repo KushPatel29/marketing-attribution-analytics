@@ -6,7 +6,7 @@
 ![Python](https://img.shields.io/badge/Python-pandas%20%2B%20numpy-3776AB?logo=python&logoColor=white)
 ![SQL](https://img.shields.io/badge/SQL-window%20functions%20%2B%20cohorts-CC2927)
 ![Causal](https://img.shields.io/badge/Causal-geo%20holdout%20%2B%20DiD-6A4C93)
-![Tests](https://img.shields.io/badge/tests-56%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-60%20passing-3B8C6E)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 **All data is synthetic** — 14,000 user journeys, 50,282 sessions, 101,879 funnel
@@ -249,7 +249,7 @@ python engine/run_analytics.py                     # runs sql/ verbatim
 python attribution/evaluate.py                     # the bake-off
 python experiments/incrementality.py               # the geo holdout
 python analytics/make_visuals.py                   # docs/ charts
-python -m pytest -q                                # 56 tests
+python -m pytest -q                                # 60 tests
 streamlit run app/streamlit_app.py                 # the console
 ```
 

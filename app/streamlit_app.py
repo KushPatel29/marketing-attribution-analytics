@@ -71,12 +71,16 @@ except FileNotFoundError:
     )
     st.stop()
 
-tab1, tab2, tab3, tab4 = st.tabs(
-    ["🎯 Attribution vs truth", "🔻 Funnel", "👥 Cohorts & LTV", "🧪 The experiment"]
-)
+# Deliberately a radio rather than st.tabs. Charts and dataframes inside a
+# hidden tab are measured while their container has zero width, so every
+# section except the one active on first load rendered as an empty box. A radio
+# puts only the selected section in the DOM, so everything measures correctly.
+SECTIONS = ["🎯 Attribution vs truth", "🔻 Funnel", "👥 Cohorts & LTV", "🧪 The experiment"]
+section = st.radio("Section", SECTIONS, horizontal=True, label_visibility="collapsed")
+st.divider()
 
-# ------------------------------------------------------------------- tab 1
-with tab1:
+# --------------------------------------------------------- section: attribution
+if section == SECTIONS[0]:
     best = scores.iloc[0]
     worst = scores.iloc[-1]
     direct_lt = float(cmp_df.loc[cmp_df["channel"] == "direct", "last_touch"].iloc[0])
@@ -188,8 +192,8 @@ with tab1:
         width="stretch",
     )
 
-# ------------------------------------------------------------------- tab 2
-with tab2:
+# --------------------------------------------------------- section: funnel
+if section == SECTIONS[1]:
     f = funnel.sort_values("funnel_step")
     st.subheader("Where sessions die")
     st.altair_chart(
@@ -231,8 +235,8 @@ with tab2:
     st.subheader("Traffic quality by entry channel")
     st.dataframe(load("funnel_by_entry_channel"), width="stretch", hide_index=True)
 
-# ------------------------------------------------------------------- tab 3
-with tab3:
+# --------------------------------------------------------- section: cohorts
+if section == SECTIONS[2]:
     st.subheader("Cumulative revenue per acquired customer")
     st.altair_chart(
         alt.Chart(ltv)
@@ -272,8 +276,8 @@ with tab3:
         width="stretch", hide_index=True,
     )
 
-# ------------------------------------------------------------------- tab 4
-with tab4:
+# --------------------------------------------------------- section: experiment
+if section == SECTIONS[3]:
     did = readout[readout["estimator"].str.startswith("difference")].iloc[0]
     naive = readout[readout["estimator"].str.startswith("naive")].iloc[0]
     p = power.iloc[0]
@@ -297,7 +301,7 @@ with tab4:
 
     st.markdown("#### Power, computed before the readout")
     st.write(
-        f"With **{p['sessions_treated_arm']:,}** sessions in the treated arm and a "
+        f"With **{int(p['sessions_treated_arm']):,}** sessions in the treated arm and a "
         f"baseline conversion rate of **{p['baseline_cvr']:.4f}**, this test could "
         f"detect a relative lift of **{100 * p['mde_relative']:.2f}%** at 80% power."
     )
