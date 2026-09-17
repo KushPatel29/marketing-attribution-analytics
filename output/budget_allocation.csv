@@ -1,0 +1,5 @@
+channel,current_spend,recommended_spend,spend_change,spend_change_pct,current_incremental_orders,expected_incremental_orders,downside_incremental_orders,evidence,decision_status,approval_authority,required_next_action,floor_pct,cap_pct
+paid_search,17982.24,20427.82,2445.58,13.6,394.0,432.988,219.74,Experiment calibrated,CONDITIONALLY APPROVE,Growth VP + Experimentation Lead,Scale within guardrail; repeat geo holdout quarterly,75,125
+paid_social,9334.77,8159.34,-1175.43,-12.59,179.0,161.401,80.701,Planning prior — underpowered,TEST BEFORE SCALE,Growth VP after power review,Hold near baseline; pool geos or extend test duration,70,135
+display,2119.14,3178.71,1059.57,50.0,99.0,131.743,59.284,Planning prior — test required,TEST BEFORE SCALE,Growth VP after lift study approval,Run lift test before treating modeled upside as realized,60,150
+affiliate,7765.73,5436.01,-2329.72,-30.0,124.0,93.532,51.443,Planning prior — test required,TEST BEFORE SCALE,Channel Owner + Finance Partner,Validate partner-level incrementality before scaling,70,130

@@ -1,0 +1,122 @@
+{
+  "decision": {
+    "decision_id": "MKT-ALLOC-2026-001",
+    "as_of_date": "2026-09-17",
+    "decision_owner": "Growth VP",
+    "measurement_owner": "Experimentation Lead",
+    "finance_reviewer": "Finance Business Partner",
+    "current_budget": 37201.88,
+    "recommended_budget": 37201.88,
+    "budget_variance": -0.0,
+    "current_incremental_orders": 796.0,
+    "expected_incremental_orders": 819.664,
+    "expected_order_uplift_pct": 2.97,
+    "downside_incremental_orders": 411.168,
+    "recommendation": "CONDITIONAL APPROVAL",
+    "release_gate": "1 calibrated channel; 3 channels remain test-gated",
+    "realization_check": "Re-read after 8 weeks; compare realized lift with interval"
+  },
+  "guardrails": [
+    {
+      "channel": "paid_search",
+      "current_spend": 17982.24,
+      "recommended_spend": 20427.82,
+      "floor_pct": 75,
+      "cap_pct": 125,
+      "evidence": "Experiment calibrated",
+      "decision_status": "CONDITIONALLY APPROVE",
+      "approval_authority": "Growth VP + Experimentation Lead",
+      "required_next_action": "Scale within guardrail; repeat geo holdout quarterly"
+    },
+    {
+      "channel": "paid_social",
+      "current_spend": 9334.77,
+      "recommended_spend": 8159.34,
+      "floor_pct": 70,
+      "cap_pct": 135,
+      "evidence": "Planning prior \u2014 underpowered",
+      "decision_status": "TEST BEFORE SCALE",
+      "approval_authority": "Growth VP after power review",
+      "required_next_action": "Hold near baseline; pool geos or extend test duration"
+    },
+    {
+      "channel": "display",
+      "current_spend": 2119.14,
+      "recommended_spend": 3178.71,
+      "floor_pct": 60,
+      "cap_pct": 150,
+      "evidence": "Planning prior \u2014 test required",
+      "decision_status": "TEST BEFORE SCALE",
+      "approval_authority": "Growth VP after lift study approval",
+      "required_next_action": "Run lift test before treating modeled upside as realized"
+    },
+    {
+      "channel": "affiliate",
+      "current_spend": 7765.73,
+      "recommended_spend": 5436.01,
+      "floor_pct": 70,
+      "cap_pct": 130,
+      "evidence": "Planning prior \u2014 test required",
+      "decision_status": "TEST BEFORE SCALE",
+      "approval_authority": "Channel Owner + Finance Partner",
+      "required_next_action": "Validate partner-level incrementality before scaling"
+    }
+  ],
+  "measurement_readiness": [
+    {
+      "recommended_method": "Multi-touch attribution",
+      "current_readiness": "READY",
+      "next_action": "Use for journey diagnosis; never label credit as incrementality"
+    },
+    {
+      "recommended_method": "Randomized geo holdout or lift study",
+      "current_readiness": "READY \u2014 paid_search",
+      "next_action": "Use the geo result and interval; re-power every other channel"
+    },
+    {
+      "recommended_method": "MMM calibrated to experiments",
+      "current_readiness": "NOT READY",
+      "next_action": "Collect longer history; do not fit MMM to the current 12-month window"
+    },
+    {
+      "recommended_method": "Randomized A/B or conversion-lift test",
+      "current_readiness": "DESIGN REQUIRED",
+      "next_action": "Write the decision and MDE before inspecting treatment results"
+    }
+  ],
+  "reconciliation": [
+    {
+      "channel": "paid_search",
+      "platform_reported_conversions": 385,
+      "modeled_attributed_conversions": 302.976,
+      "true_incremental_conversions": 394,
+      "reporting_status": "UNDER-CREDITED"
+    },
+    {
+      "channel": "paid_social",
+      "platform_reported_conversions": 96,
+      "modeled_attributed_conversions": 250.971,
+      "true_incremental_conversions": 179,
+      "reporting_status": "OVER-CREDITED"
+    },
+    {
+      "channel": "affiliate",
+      "platform_reported_conversions": 191,
+      "modeled_attributed_conversions": 163.281,
+      "true_incremental_conversions": 124,
+      "reporting_status": "OVER-CREDITED"
+    },
+    {
+      "channel": "display",
+      "platform_reported_conversions": 42,
+      "modeled_attributed_conversions": 228.34,
+      "true_incremental_conversions": 99,
+      "reporting_status": "OVER-CREDITED"
+    }
+  ],
+  "demonstration_boundary": "Synthetic decision-support demonstration. paid_search is calibrated to the synthetic geo experiment; all other channel curves are planning priors and must not be represented as observed causal effects.",
+  "integrity": {
+    "algorithm": "SHA-256",
+    "canonical_payload_sha256": "0ccc66dfe370489090cedd26cba9480276178f79ba2d97c365bb0c1dac259de2"
+  }
+}

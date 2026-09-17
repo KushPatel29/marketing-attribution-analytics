@@ -24,6 +24,7 @@ STAGES = [
     "engine/run_analytics.py",
     "attribution/evaluate.py",
     "experiments/incrementality.py",
+    "decisioning/build_decision_room.py",
     "saas/gtm_metrics.py",
 ]
 

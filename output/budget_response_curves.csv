@@ -1,0 +1,85 @@
+channel,spend_pct_of_current,scenario_spend,expected_incremental_orders,downside_incremental_orders,upside_incremental_orders,evidence
+paid_search,50,8991.12,223.386,113.368,336.527,Experiment calibrated
+paid_search,55,9890.23,242.59,123.113,365.456,Experiment calibrated
+paid_search,60,10789.34,261.283,132.6,393.617,Experiment calibrated
+paid_search,65,11688.46,279.479,141.834,421.029,Experiment calibrated
+paid_search,70,12587.57,297.191,150.823,447.712,Experiment calibrated
+paid_search,75,13486.68,314.432,159.573,473.685,Experiment calibrated
+paid_search,80,14385.79,331.215,168.09,498.968,Experiment calibrated
+paid_search,85,15284.9,347.551,176.381,523.579,Experiment calibrated
+paid_search,90,16184.02,363.453,184.451,547.535,Experiment calibrated
+paid_search,95,17083.13,378.932,192.307,570.854,Experiment calibrated
+paid_search,100,17982.24,394.0,199.953,593.553,Experiment calibrated
+paid_search,105,18881.35,408.667,207.397,615.649,Experiment calibrated
+paid_search,110,19780.46,422.944,214.642,637.157,Experiment calibrated
+paid_search,115,20679.58,436.841,221.695,658.093,Experiment calibrated
+paid_search,120,21578.69,450.369,228.561,678.472,Experiment calibrated
+paid_search,125,22477.8,463.537,235.243,698.31,Experiment calibrated
+paid_search,130,23376.91,476.355,241.748,717.62,Experiment calibrated
+paid_search,135,24276.02,488.833,248.081,736.416,Experiment calibrated
+paid_search,140,25175.14,500.978,254.244,754.713,Experiment calibrated
+paid_search,145,26074.25,512.8,260.244,772.524,Experiment calibrated
+paid_search,150,26973.36,524.309,266.084,789.86,Experiment calibrated
+paid_social,50,4667.39,101.488,50.744,152.231,Planning prior — underpowered
+paid_social,55,5134.12,110.212,55.106,165.318,Planning prior — underpowered
+paid_social,60,5600.86,118.705,59.352,178.057,Planning prior — underpowered
+paid_social,65,6067.6,126.971,63.486,190.457,Planning prior — underpowered
+paid_social,70,6534.34,135.018,67.509,202.527,Planning prior — underpowered
+paid_social,75,7001.08,142.851,71.426,214.277,Planning prior — underpowered
+paid_social,80,7467.82,150.476,75.238,225.713,Planning prior — underpowered
+paid_social,85,7934.55,157.898,78.949,236.846,Planning prior — underpowered
+paid_social,90,8401.29,165.122,82.561,247.683,Planning prior — underpowered
+paid_social,95,8868.03,172.155,86.077,258.232,Planning prior — underpowered
+paid_social,100,9334.77,179.0,89.5,268.5,Planning prior — underpowered
+paid_social,105,9801.51,185.663,92.832,278.495,Planning prior — underpowered
+paid_social,110,10268.25,192.15,96.075,288.225,Planning prior — underpowered
+paid_social,115,10734.99,198.463,99.232,297.695,Planning prior — underpowered
+paid_social,120,11201.72,204.609,102.305,306.914,Planning prior — underpowered
+paid_social,125,11668.46,210.592,105.296,315.888,Planning prior — underpowered
+paid_social,130,12135.2,216.415,108.208,324.623,Planning prior — underpowered
+paid_social,135,12601.94,222.084,111.042,333.126,Planning prior — underpowered
+paid_social,140,13068.68,227.602,113.801,341.403,Planning prior — underpowered
+paid_social,145,13535.42,232.973,116.486,349.459,Planning prior — underpowered
+paid_social,150,14002.16,238.201,119.101,357.302,Planning prior — underpowered
+affiliate,50,3882.86,70.304,38.667,101.941,Planning prior — test required
+affiliate,55,4271.15,76.348,41.991,110.705,Planning prior — test required
+affiliate,60,4659.44,82.231,45.227,119.235,Planning prior — test required
+affiliate,65,5047.72,87.958,48.377,127.539,Planning prior — test required
+affiliate,70,5436.01,93.532,51.443,135.622,Planning prior — test required
+affiliate,75,5824.3,98.958,54.427,143.489,Planning prior — test required
+affiliate,80,6212.58,104.24,57.332,151.148,Planning prior — test required
+affiliate,85,6600.87,109.382,60.16,158.603,Planning prior — test required
+affiliate,90,6989.16,114.386,62.912,165.86,Planning prior — test required
+affiliate,95,7377.44,119.258,65.592,172.924,Planning prior — test required
+affiliate,100,7765.73,124.0,68.2,179.8,Planning prior — test required
+affiliate,105,8154.02,128.616,70.739,186.493,Planning prior — test required
+affiliate,110,8542.3,133.109,73.21,193.008,Planning prior — test required
+affiliate,115,8930.59,137.483,75.616,199.35,Planning prior — test required
+affiliate,120,9318.88,141.741,77.957,205.524,Planning prior — test required
+affiliate,125,9707.16,145.885,80.237,211.533,Planning prior — test required
+affiliate,130,10095.45,149.919,82.455,217.382,Planning prior — test required
+affiliate,135,10483.74,153.846,84.615,223.076,Planning prior — test required
+affiliate,140,10872.02,157.668,86.718,228.619,Planning prior — test required
+affiliate,145,11260.31,161.389,88.764,234.014,Planning prior — test required
+affiliate,150,11648.59,165.011,90.756,239.266,Planning prior — test required
+display,50,1059.57,56.13,25.259,87.002,Planning prior — test required
+display,55,1165.53,60.955,27.43,94.481,Planning prior — test required
+display,60,1271.48,65.652,29.544,101.761,Planning prior — test required
+display,65,1377.44,70.224,31.601,108.848,Planning prior — test required
+display,70,1483.4,74.675,33.604,115.746,Planning prior — test required
+display,75,1589.36,79.007,35.553,122.461,Planning prior — test required
+display,80,1695.31,83.224,37.451,128.997,Planning prior — test required
+display,85,1801.27,87.329,39.298,135.36,Planning prior — test required
+display,90,1907.23,91.325,41.096,141.553,Planning prior — test required
+display,95,2013.18,95.214,42.846,147.582,Planning prior — test required
+display,100,2119.14,99.0,44.55,153.45,Planning prior — test required
+display,105,2225.1,102.685,46.208,159.162,Planning prior — test required
+display,110,2331.05,106.273,47.823,164.723,Planning prior — test required
+display,115,2437.01,109.765,49.394,170.135,Planning prior — test required
+display,120,2542.97,113.164,50.924,175.404,Planning prior — test required
+display,125,2648.93,116.473,52.413,180.533,Planning prior — test required
+display,130,2754.88,119.693,53.862,185.525,Planning prior — test required
+display,135,2860.84,122.828,55.273,190.384,Planning prior — test required
+display,140,2966.8,125.88,56.646,195.114,Planning prior — test required
+display,145,3072.75,128.851,57.983,199.719,Planning prior — test required
+display,150,3178.71,131.743,59.284,204.201,Planning prior — test required

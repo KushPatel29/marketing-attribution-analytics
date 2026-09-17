@@ -1,0 +1,5 @@
+channel,spend,platform_reported_conversions,modeled_attributed_conversions,true_incremental_conversions,attribution_minus_incremental,reporting_status,incrementality_evidence,decision_use
+paid_search,17982.24,385,302.975595,394,-91.024405,UNDER-CREDITED,Experiment calibrated,Investment calibration
+paid_social,9334.77,96,250.97108400000002,179,71.97108400000002,OVER-CREDITED,Planning prior — underpowered,Planning prior only
+affiliate,7765.73,191,163.280871,124,39.28087099999999,OVER-CREDITED,Planning prior — test required,Planning prior only
+display,2119.14,42,228.340125,99,129.340125,OVER-CREDITED,Planning prior — test required,Planning prior only

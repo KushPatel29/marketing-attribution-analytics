@@ -42,17 +42,56 @@ MODEL_LABELS = {
     "shapley": "Shapley value",
 }
 
+st.markdown(
+    """
+    <style>
+    .stApp { background: #F7F9FC; }
+    .block-container { max-width: 1320px; padding-top: 2rem; padding-bottom: 4rem; }
+    h1, h2, h3 { letter-spacing: -0.025em; }
+    [data-testid="stMetric"] {
+        background: white;
+        border: 1px solid #DCE3EA;
+        border-radius: 10px;
+        padding: 0.9rem 1rem;
+        box-shadow: 0 2px 8px rgba(18, 67, 109, 0.05);
+    }
+    [data-testid="stMetricValue"] { font-size: 2rem; }
+    .evidence-strip {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.65rem;
+        margin: 0.4rem 0 1.2rem;
+    }
+    .evidence-step {
+        background: white;
+        border: 1px solid #DCE3EA;
+        border-top: 4px solid #12436D;
+        border-radius: 9px;
+        padding: 0.85rem;
+        min-height: 116px;
+    }
+    .evidence-step strong { color: #12436D; }
+    .evidence-step small { color: #526271; line-height: 1.35; }
+    .gate-pass { border-top-color: #28A197; }
+    .gate-review { border-top-color: #F46A25; }
+    @media (max-width: 900px) {
+        .evidence-strip { grid-template-columns: 1fr 1fr; }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 
 @st.cache_data
 def load(name: str, folder: str = "output") -> pd.DataFrame:
     return pd.read_csv(ROOT / folder / f"{name}.csv")
 
 
-st.title("📈 Marketing Attribution & Incrementality")
+st.title("📈 Marketing Measurement & Investment Decision Room")
 st.caption(
-    "Synthetic e-commerce data with a **planted ground truth** — the real "
-    "incremental contribution of every channel is known, so attribution models "
-    "can be graded instead of argued about."
+    "A governed synthetic decision laboratory: grade attribution against planted truth, "
+    "calibrate with a geo holdout, and turn the evidence into a constrained investment plan."
 )
 
 try:
@@ -78,6 +117,11 @@ try:
     cheapest = load("saas_cheapest_channel_by_model")
     plg = load("plg_funnel")
     plg_motion = load("plg_vs_sales_led")
+    measurement = load("measurement_strategy")
+    reconciliation = load("outcome_reconciliation")
+    response_curves = load("budget_response_curves")
+    allocation = load("budget_allocation")
+    allocation_summary = load("budget_portfolio_summary").iloc[0]
     meta = load("run_metadata").iloc[0]
     truth = load("ground_truth_incrementality", "data").set_index("channel")
 except FileNotFoundError:
@@ -95,6 +139,7 @@ except FileNotFoundError:
 # section except the one active on first load rendered as an empty box. A radio
 # puts only the selected section in the DOM, so everything measures correctly.
 SECTIONS = [
+    "🧭 Investment decision room",
     "🎯 Attribution vs truth",
     "🔻 Funnel",
     "👥 Cohorts & LTV",
@@ -105,8 +150,215 @@ SECTIONS = [
 section = st.radio("Section", SECTIONS, horizontal=True, label_visibility="collapsed")
 st.divider()
 
-# --------------------------------------------------------- section: attribution
+# ------------------------------------------------------ section: decision room
 if section == SECTIONS[0]:
+    st.subheader("From measurement evidence to an approval-ready investment decision")
+    st.caption(
+        "A governed planning demonstration: every recommendation carries its evidence class, "
+        "business limit, approval authority and next measurement action."
+    )
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Paid-media envelope", f"${allocation_summary['current_budget']:,.0f}",
+              "held constant", delta_color="off")
+    c2.metric("Modelled order uplift",
+              f"{allocation_summary['expected_order_uplift_pct']:.1f}%",
+              "not yet realized", delta_color="off")
+    c3.metric("Calibrated coverage", "1 / 4", "3 test-gated", delta_color="off")
+    c4.metric("Release posture", "Conditional", "approval", delta_color="off")
+
+    st.warning(
+        "**Decision boundary:** paid search is calibrated to the synthetic geo holdout. "
+        "The other response curves are planning priors, not observed causal effects. "
+        "Their proposed changes remain gated until the specified tests are complete.",
+        icon=":material/shield:",
+    )
+
+    st.markdown("#### Measurement confidence ladder")
+    st.markdown(
+        """
+        <div class="evidence-strip">
+          <div class="evidence-step gate-pass">
+            <strong>01 · Delivery</strong><br>
+            <small>Spend, sessions and platform conversions reconcile to source grain.</small>
+          </div>
+          <div class="evidence-step gate-pass">
+            <strong>02 · Attribution</strong><br>
+            <small>Useful for journey diagnosis; descriptive, never called causal.</small>
+          </div>
+          <div class="evidence-step gate-pass">
+            <strong>03 · Incrementality</strong><br>
+            <small>Geo holdout reports power, interval and truth coverage.</small>
+          </div>
+          <div class="evidence-step gate-review">
+            <strong>04 · Allocation</strong><br>
+            <small>Downside-weighted plan; three channels remain test-gated.</small>
+          </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("#### Choose the decision before choosing the method")
+    selected_decision = st.selectbox("Decision to support", measurement["decision"].tolist())
+    method = measurement[measurement["decision"] == selected_decision].iloc[0]
+    a, b, c = st.columns([1.3, 1, 1.7])
+    a.markdown(f"**Method**  \n{method['recommended_method']}")
+    b.markdown(f"**Readiness**  \n{method['current_readiness']}")
+    c.markdown(f"**Next action**  \n{method['next_action']}")
+    with st.expander("Minimum evidence and causal boundary"):
+        st.write(method["question"])
+        st.write(f"**Causal strength:** {method['causal_strength']}")
+        st.write(f"**Minimum evidence:** {method['minimum_evidence']}")
+
+    st.divider()
+    st.markdown("#### One business, three different conversion numbers")
+    st.caption(
+        "Platform reporting describes delivery; attribution distributes journey credit; "
+        "incrementality estimates what changed because marketing was present. They do not "
+        "reconcile "
+        "by forcing them to match."
+    )
+    conversion_long = reconciliation.melt(
+        id_vars=["channel"],
+        value_vars=[
+            "platform_reported_conversions",
+            "modeled_attributed_conversions",
+            "true_incremental_conversions",
+        ],
+        var_name="measure",
+        value_name="conversions",
+    )
+    conversion_labels = {
+        "platform_reported_conversions": "Platform reported",
+        "modeled_attributed_conversions": "Position-based credit",
+        "true_incremental_conversions": "Incremental (synthetic truth)",
+    }
+    conversion_long["measure"] = conversion_long["measure"].map(conversion_labels)
+    st.altair_chart(
+        alt.Chart(conversion_long).mark_bar().encode(
+            x=alt.X("channel:N", title=None),
+            y=alt.Y("conversions:Q", title="conversions / credited conversions"),
+            color=alt.Color(
+                "measure:N", title=None,
+                scale=alt.Scale(
+                    domain=list(conversion_labels.values()),
+                    range=[ORANGE, NAVY, TEAL],
+                ),
+            ),
+            xOffset="measure:N",
+            tooltip=["channel", "measure", alt.Tooltip("conversions:Q", format=".1f")],
+        ).properties(height=320),
+        width="stretch",
+    )
+
+    st.divider()
+    st.markdown("#### Constrained allocation — current versus recommended")
+    st.caption(
+        "Same total budget. The optimizer uses diminishing returns, 60–75% floors, "
+        "125–150% caps and a 65% weight on the downside case."
+    )
+    allocation_long = allocation.melt(
+        id_vars=["channel"],
+        value_vars=["current_spend", "recommended_spend"],
+        var_name="plan",
+        value_name="spend",
+    )
+    allocation_long["plan"] = allocation_long["plan"].map(
+        {"current_spend": "Current", "recommended_spend": "Recommended"}
+    )
+    left, right = st.columns([1.25, 1])
+    with left:
+        st.altair_chart(
+            alt.Chart(allocation_long).mark_bar().encode(
+                y=alt.Y("channel:N", title=None, sort="-x"),
+                x=alt.X("spend:Q", title="paid-media spend ($)"),
+                color=alt.Color(
+                    "plan:N", title=None,
+                    scale=alt.Scale(domain=["Current", "Recommended"], range=["#A8B0B8", TEAL]),
+                ),
+                yOffset="plan:N",
+                tooltip=["channel", "plan", alt.Tooltip("spend:Q", format="$,.0f")],
+            ).properties(height=315),
+            width="stretch",
+        )
+    with right:
+        st.dataframe(
+            allocation[[
+                "channel", "spend_change_pct", "evidence", "decision_status"
+            ]].rename(columns={
+                "channel": "channel",
+                "spend_change_pct": "change %",
+                "evidence": "evidence",
+                "decision_status": "gate",
+            }),
+            width="stretch",
+            hide_index=True,
+        )
+
+    selected_channel = st.selectbox(
+        "Inspect response and uncertainty",
+        allocation["channel"].tolist(),
+        format_func=lambda value: value.replace("_", " ").title(),
+    )
+    curve = response_curves[response_curves["channel"] == selected_channel]
+    band = alt.Chart(curve).mark_area(opacity=0.16, color=TEAL).encode(
+        x=alt.X("scenario_spend:Q", title="scenario spend ($)"),
+        y=alt.Y("downside_incremental_orders:Q", title="incremental orders"),
+        y2="upside_incremental_orders:Q",
+    )
+    centre = alt.Chart(curve).mark_line(point=True, color=NAVY, strokeWidth=3).encode(
+        x="scenario_spend:Q",
+        y="expected_incremental_orders:Q",
+        tooltip=[
+            alt.Tooltip("scenario_spend:Q", format="$,.0f"),
+            alt.Tooltip("expected_incremental_orders:Q", format=".1f"),
+            alt.Tooltip("downside_incremental_orders:Q", format=".1f"),
+            alt.Tooltip("upside_incremental_orders:Q", format=".1f"),
+        ],
+    )
+    st.altair_chart((band + centre).properties(height=300), width="stretch")
+
+    st.markdown("#### Approval and realization record")
+    st.dataframe(
+        allocation[[
+            "channel", "approval_authority", "required_next_action", "floor_pct", "cap_pct"
+        ]],
+        width="stretch",
+        hide_index=True,
+    )
+    st.info(
+        f"**{allocation_summary['decision_id']}** · Owner: "
+        f"{allocation_summary['decision_owner']} · Finance review: "
+        f"{allocation_summary['finance_reviewer']} · "
+        f"{allocation_summary['realization_check']}",
+        icon=":material/assignment_turned_in:",
+    )
+    d1, d2, d3 = st.columns(3)
+    d1.download_button(
+        "Download allocation CSV",
+        allocation.to_csv(index=False).encode(),
+        "marketing_budget_allocation.csv",
+        "text/csv",
+        width="stretch",
+    )
+    d2.download_button(
+        "Download signed decision packet",
+        (ROOT / "output" / "marketing_investment_decision.json").read_bytes(),
+        "marketing_investment_decision.json",
+        "application/json",
+        width="stretch",
+    )
+    d3.download_button(
+        "Download executive memo",
+        (ROOT / "output" / "marketing_investment_memo.md").read_bytes(),
+        "marketing_investment_memo.md",
+        "text/markdown",
+        width="stretch",
+    )
+
+# --------------------------------------------------------- section: attribution
+if section == SECTIONS[1]:
     best = scores.iloc[0]
     worst = scores.iloc[-1]
     direct_lt = float(cmp_df.loc[cmp_df["channel"] == "direct", "last_touch"].iloc[0])
@@ -219,7 +471,7 @@ if section == SECTIONS[0]:
     )
 
 # --------------------------------------------------------- section: funnel
-if section == SECTIONS[1]:
+if section == SECTIONS[2]:
     f = funnel.sort_values("funnel_step")
     st.subheader("Where sessions die")
     st.altair_chart(
@@ -262,7 +514,7 @@ if section == SECTIONS[1]:
     st.dataframe(load("funnel_by_entry_channel"), width="stretch", hide_index=True)
 
 # --------------------------------------------------------- section: cohorts
-if section == SECTIONS[2]:
+if section == SECTIONS[3]:
     st.subheader("Cumulative revenue per acquired customer")
     st.altair_chart(
         alt.Chart(ltv)
@@ -303,7 +555,7 @@ if section == SECTIONS[2]:
     )
 
 # --------------------------------------------------------- section: experiment
-if section == SECTIONS[3]:
+if section == SECTIONS[4]:
     did = readout[readout["estimator"].str.startswith("difference")].iloc[0]
     naive = readout[readout["estimator"].str.startswith("naive")].iloc[0]
     p = power.iloc[0]
@@ -356,7 +608,7 @@ if section == SECTIONS[3]:
     )
 
 # --------------------------------------------------- section: SaaS pipeline
-if section == SECTIONS[4]:
+if section == SECTIONS[5]:
     st.subheader("Act two — a B2B SaaS go-to-market motion")
     st.caption(
         "CRM-shaped: accounts, opportunities walking a stage ladder, an ARR "
@@ -458,7 +710,7 @@ if section == SECTIONS[4]:
         )
 
 # ------------------------------------------------- section: unit economics
-if section == SECTIONS[5]:
+if section == SECTIONS[6]:
     st.subheader("Does the motion pay for itself?")
     worst_seg = econ.sort_values("ltv_to_cac").iloc[0]
     best_seg = econ.sort_values("ltv_to_cac").iloc[-1]

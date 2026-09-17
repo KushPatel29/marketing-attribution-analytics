@@ -1,9 +1,9 @@
-<h1>📈 Marketing Attribution & Incrementality</h1>
+<h1>📈 Marketing Measurement & Investment Decision Room</h1>
 
 ### *Every attribution argument I have sat through was unfalsifiable, because nobody in the room knew the right answer. So I built a dataset where I do.*
 
 [![CI](https://github.com/KushPatel29/marketing-attribution-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/marketing-attribution-analytics/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-91%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-128%20passing-3B8C6E)
 ![Python](https://img.shields.io/badge/Python-pandas%20%2B%20numpy-3776AB?logo=python&logoColor=white)
 ![SQL](https://img.shields.io/badge/SQL-9%20files%2C%20run%20verbatim-CC2927)
 ![Causal](https://img.shields.io/badge/Causal-geo%20holdout%20%2B%20DiD-6A4C93)
@@ -11,7 +11,12 @@
 ![LookML](https://img.shields.io/badge/LookML-semantic%20layer%2C%20schema--tested-4285F4)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
-**▶ Live demo — [attribution-vs-truth.streamlit.app](https://attribution-vs-truth.streamlit.app)**
+**▶ Live decision room — [attribution-vs-truth.streamlit.app](https://attribution-vs-truth.streamlit.app)**
+
+**90-second review:** open **Investment decision room** → compare reported,
+attributed and incremental conversions → inspect the constrained allocation →
+download the signed decision packet. The recommendation is deliberately
+conditional: only one of four paid channels has experiment-calibrated evidence.
 
 ---
 
@@ -25,13 +30,15 @@ reason is simple: the counterfactual — *would this customer have bought anyway
 attribution models are then graded against it, and a geo holdout is run to see
 what an actual experiment recovers. A second act asks all the same questions of
 a **B2B SaaS go-to-market motion**, where revenue recurs and a conversion takes
-months — which is where most of the metrics a revenue team lives on come from.
+months. A governed decision room then converts that evidence into a constrained
+paid-media plan with uncertainty, named approval authority, release gates and a
+realization check — without relabelling attribution as causality.
 
 All data is synthetic and generated from fixed seeds. No real company, customer,
 campaign, or spend figure appears anywhere.
 
 <table>
-<tr><td width="33%" valign="top">
+<tr><td width="25%" valign="top">
 
 ### 🎯 Act one
 **14,000** user journeys
@@ -40,7 +47,7 @@ campaign, or spend figure appears anywhere.
 
 E-commerce attribution, graded against a planted ground truth.
 
-</td><td width="33%" valign="top">
+</td><td width="25%" valign="top">
 
 ### 🧪 The experiment
 **20** geos, **1.77M** sessions
@@ -48,7 +55,7 @@ E-commerce attribution, graded against a planted ground truth.
 
 A geo holdout, because no observational model could recover the truth.
 
-</td><td width="33%" valign="top">
+</td><td width="25%" valign="top">
 
 ### 💼 Act two
 **2,600** accounts
@@ -57,8 +64,58 @@ A geo holdout, because no observational model could recover the truth.
 
 A B2B SaaS motion: pipeline, ARR, quota, PLG.
 
+</td><td width="25%" valign="top">
+
+### 🧭 The decision
+**$37.2K** fixed budget
+**4** paid channels
+
+Downside-weighted allocation with floors, caps and test gates.
+
 </td></tr>
 </table>
+
+---
+
+## The governed investment decision
+
+The app now opens on the decision, not the dashboard. A media leader can choose
+the business question first and see whether it belongs to attribution, a
+randomized holdout, a platform lift test or an experiment-calibrated MMM. The
+repository refuses to fit an MMM to its current 12-month window; the readiness
+contract requires 2–3 years of weekly history, controls, saturation/adstock,
+holdout validation and experiment calibration.
+
+The allocation stage keeps the current **$37,201.88** paid-media envelope fixed.
+It applies diminishing-return curves, per-channel floors of **60–75%**, caps of
+**125–150%**, and a risk objective weighted **65% to the downside case**. The
+result models **796.0 → 819.7 incremental orders (+3.0%)**, but calls that a
+planning estimate rather than a realized outcome.
+
+| channel | proposed change | evidence | decision gate |
+|---|---:|---|---|
+| paid search | +13.6% | geo-experiment calibrated | conditionally approve |
+| paid social | −12.6% | underpowered planning prior | test before scale |
+| display | +50.0% | planning prior | lift test before scale |
+| affiliate | −30.0% | planning prior | validate partner incrementality |
+
+The apparent display upside is exactly where governance matters: the model may
+allocate to it, but the release workflow does **not** permit a scale claim until
+the lift test is complete. Every channel row carries its approval authority,
+required next action and investment guardrails.
+
+Decision evidence is generated rather than hand-written:
+
+- [`output/measurement_strategy.csv`](output/measurement_strategy.csv) — method-selection contract;
+- [`output/outcome_reconciliation.csv`](output/outcome_reconciliation.csv) — reported vs attributed vs incremental outcomes;
+- [`output/budget_response_curves.csv`](output/budget_response_curves.csv) — centre/downside/upside response scenarios;
+- [`output/budget_allocation.csv`](output/budget_allocation.csv) — constrained recommendation and approval gates;
+- [`output/marketing_investment_decision.json`](output/marketing_investment_decision.json) — decision packet with a SHA-256 payload digest;
+- [`output/marketing_investment_memo.md`](output/marketing_investment_memo.md) — one-page executive investment memo.
+
+The demonstration boundary is explicit: all data is synthetic; paid search is
+calibrated to the synthetic geo experiment; the other channel curves are
+planning priors and must not be represented as observed causal effects.
 
 ---
 
@@ -82,7 +139,8 @@ A B2B SaaS motion: pipeline, ARR, quota, PLG.
 ## Contents
 
 **Act one — e-commerce attribution**
-&nbsp;&nbsp;[Making the unanswerable answerable](#making-the-unanswerable-answerable) ·
+&nbsp;&nbsp;[Governed investment decision](#the-governed-investment-decision) ·
+[Making the unanswerable answerable](#making-the-unanswerable-answerable) ·
 [The planted trap](#the-planted-trap) ·
 [What the models got wrong](#what-the-models-got-wrong) ·
 [Why they cannot win](#why-they-cannot-win) ·
@@ -534,10 +592,11 @@ python saas/generate_gtm_data.py                   # act two: the CRM-shaped dat
 python engine/run_analytics.py                     # runs sql/ verbatim
 python attribution/evaluate.py                     # the bake-off
 python experiments/incrementality.py               # the geo holdout
+python decisioning/build_decision_room.py           # governed allocation + signed packet
 python saas/gtm_metrics.py                         # CAC payback, magic number, LTV:CAC
 python analytics/make_visuals.py                   # docs/ charts
 
-python -m pytest -q                                # 91 tests
+python -m pytest -q                                # 128 tests
 streamlit run app/streamlit_app.py                 # the console
 ```
 
@@ -551,7 +610,8 @@ pipeline is not byte-reproducible across platforms, the build fails.**
   effect at the aggregate level, over years, with adstock and saturation — and
   needs several years of weekly spend to fit. On twelve months of one
   advertiser's data it would be curve-fitting dressed as causality, which is the
-  exact failure mode this repo was built to expose.
+  exact failure mode this repo was built to expose. The decision room's
+  transparent response curves are scenario-planning priors, not a renamed MMM.
 - **A neural or LSTM attribution model.** With seven channels and 3.6 touches per
   journey there is no sequence structure deep learning could find that the Markov
   chain cannot. And the Markov chain already lost, for reasons no amount of model

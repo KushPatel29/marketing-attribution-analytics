@@ -1,0 +1,2 @@
+decision_id,as_of_date,decision_owner,measurement_owner,finance_reviewer,current_budget,recommended_budget,budget_variance,current_incremental_orders,expected_incremental_orders,expected_order_uplift_pct,downside_incremental_orders,recommendation,release_gate,realization_check
+MKT-ALLOC-2026-001,2026-09-17,Growth VP,Experimentation Lead,Finance Business Partner,37201.88,37201.88,-0.0,796.0,819.664,2.97,411.168,CONDITIONAL APPROVAL,1 calibrated channel; 3 channels remain test-gated,Re-read after 8 weeks; compare realized lift with interval

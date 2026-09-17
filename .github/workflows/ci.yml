@@ -50,6 +50,9 @@ jobs:
       - name: Read out the geo holdout
         run: python experiments/incrementality.py
 
+      - name: Build the governed measurement and investment decision pack
+        run: python decisioning/build_decision_room.py
+
       - name: SaaS unit economics, magic number, CAC by attribution model
         run: python saas/gtm_metrics.py
 
