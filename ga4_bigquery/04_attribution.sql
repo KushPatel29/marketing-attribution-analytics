@@ -1,4 +1,4 @@
--- Who gets the credit for the store's revenue, under three rules a team
+-- Who gets the credit for the store's revenue, under four rules a team
 -- could defensibly pick, on real data with no planted truth to settle it.
 --   first touch:            the channel that first acquired the user
 --   last click:             the channel of the session that bought
@@ -12,7 +12,7 @@
 WITH flagged AS (
   SELECT
     *,
-    session_source IN ('shop.googlemerchandisestore.com', 'googlemerchandisestore.com') AS self_referral
+    COALESCE(session_source IN ('shop.googlemerchandisestore.com', 'googlemerchandisestore.com'), FALSE) AS self_referral
   FROM ga4_portfolio.sessions
 ),
 s AS (
