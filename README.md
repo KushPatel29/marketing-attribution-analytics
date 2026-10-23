@@ -3,12 +3,13 @@
 ### *Every attribution argument I have sat through was unfalsifiable, because nobody in the room knew the right answer. So I built a dataset where I do.*
 
 [![CI](https://github.com/KushPatel29/marketing-attribution-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/KushPatel29/marketing-attribution-analytics/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-128%20passing-3B8C6E)
+![Tests](https://img.shields.io/badge/tests-138%20passing-3B8C6E)
 ![Python](https://img.shields.io/badge/Python-pandas%20%2B%20numpy-3776AB?logo=python&logoColor=white)
 ![SQL](https://img.shields.io/badge/SQL-9%20files%2C%20run%20verbatim-CC2927)
 ![Causal](https://img.shields.io/badge/Causal-geo%20holdout%20%2B%20DiD-6A4C93)
 ![GTM](https://img.shields.io/badge/GTM-ARR%20%C2%B7%20NRR%2FGRR%20%C2%B7%20pipeline%20%C2%B7%20PLG-0B5FA5)
 ![LookML](https://img.shields.io/badge/LookML-semantic%20layer%2C%20schema--tested-4285F4)
+![BigQuery](https://img.shields.io/badge/BigQuery-real%20GA4%20export%2C%204.3M%20events-669DF6?logo=googlebigquery&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
 
 **▶ Live decision room — [attribution-vs-truth.streamlit.app](https://attribution-vs-truth.streamlit.app)**
@@ -34,8 +35,10 @@ months. A governed decision room then converts that evidence into a constrained
 paid-media plan with uncertainty, named approval authority, release gates and a
 realization check — without relabelling attribution as causality.
 
-All data is synthetic and generated from fixed seeds. No real company, customer,
-campaign, or spend figure appears anywhere.
+Acts one and two are synthetic and generated from fixed seeds: no real company,
+customer, campaign or spend figure appears in them. [Act three](#act-three--real-ga4-data-in-bigquery)
+asks the same questions of real data that has no planted answer: Google's public
+GA4 export of its own merchandise store, queried in BigQuery.
 
 <table>
 <tr><td width="25%" valign="top">
@@ -157,6 +160,12 @@ planning priors and must not be represented as observed causal effects.
 [Where the two acts collide](#where-act-one-and-act-two-collide) ·
 [Product-led motion](#the-product-led-motion) ·
 [Semantic layer](#the-semantic-layer)
+
+**Act three — real GA4 data, in BigQuery**
+&nbsp;&nbsp;[What the raw export gets wrong](#act-three--real-ga4-data-in-bigquery) ·
+[A funnel the tags break](#a-funnel-the-tags-break) ·
+[A third of revenue, credited to the store itself](#a-third-of-revenue-credited-to-the-store-itself) ·
+[New-user retention](#new-user-retention)
 
 **How it is built**
 &nbsp;&nbsp;[The SQL is the deliverable](#the-sql-is-the-deliverable) ·
@@ -539,6 +548,82 @@ measure: win_rate {
 Denominator is **closed** deals. A raw `AVG(is_won)` silently puts open deals in
 the denominator and understates the number all quarter — the most common wrong
 metric on a sales dashboard. A test fails if anyone replaces it with an average.
+
+---
+---
+
+# Act three — real GA4 data, in BigQuery
+
+Acts one and two can grade every answer because the truth was planted. Real
+analytics data has no planted truth, so the question changes from *which model
+is right* to *what in this data would mislead me first*. The data is Google's
+public GA4 export of the Google Merchandise Store
+(`bigquery-public-data.ga4_obfuscated_sample_ecommerce`, 1 November 2020 to
+31 January 2021, obfuscated by Google): 4,295,584 events from 270,154 users.
+The SQL in [`ga4_bigquery/`](ga4_bigquery/) ran in a BigQuery sandbox on
+23 October 2026, and every number below is in
+[`results.json`](ga4_bigquery/results.json) with the BigQuery job that returned
+it. [`test_ga4_bigquery.py`](tests/test_ga4_bigquery.py) holds those numbers to
+each other and to this section.
+
+[`01_sessions.sql`](ga4_bigquery/01_sessions.sql) builds one row per session
+(360,129 sessions) with its traffic source, funnel timestamps and transactions,
+and [`06_reconcile.sql`](ga4_bigquery/06_reconcile.sql) recomputes sessions,
+users, four funnel steps, transactions and revenue straight from the raw events
+with different SQL: all of them agree exactly.
+
+**The raw export overstates revenue by 18%.** Of 5,692 purchase events, there
+are 906 purchase events with no transaction ID (23 NULL, 883 `(not set)`), which
+cannot be deduplicated, and 335 duplicate purchase events that re-send 326
+transactions already logged. Summing every purchase event gives $362,165; counting each of
+the 4,451 transactions once gives $307,640. The 450 purchase events with no
+revenue at all turn out to be among the duplicates and the ID-less ones, never a
+first purchase. Two more things a dashboard built on this export would carry
+without saying: 86% of events are flagged `debug_mode`, and 5,159 sessions have
+no `session_start` event.
+
+## A funnel the tags break
+
+[`03_funnel.sql`](ga4_bigquery/03_funnel.sql) counts the checkout funnel three
+ways. Opened at all: 77,020 sessions viewed an item, 15,188 added to cart,
+11,106 began checkout, 6,815 added payment and 4,848 bought. Strictly in GA4's
+documented order, the funnel collapses at shipping, from 5,293 to 1,222. The
+customers did not leave there; the tags fire out of order. In 6,862 of 11,104
+sessions with both events, `add_shipping_info` is logged before
+`begin_checkout`. Counting the two as one checkout stage gives a funnel the store
+can act on: 5,294 reach checkout in order, 3,723 add payment and 2,751 buy. It
+still undercounts, and says so: 5,145 sessions reach checkout with no
+`add_to_cart` in the session, because the cart was filled in an earlier visit.
+
+## A third of revenue, credited to the store itself
+
+[`04_attribution.sql`](ga4_bigquery/04_attribution.sql) credits the 4,451
+transactions under four rules. First touch against last click moves 33.5% of
+revenue between channels, the same unfalsifiable argument act one was built to
+settle, now with no truth to settle it. Last click hands Referral 54% of revenue,
+and $100,254 of that comes from sessions whose referrer is the store's own domain:
+checkout and cross-domain hops logged as new referrals, which a referral
+exclusion list would have stopped. Treating those as no touch at all moves 27.3%
+of revenue again: Referral falls from 56% to 29% and Organic Search rises from
+32% to 44%. The largest swing in this data comes from a tracking setting, not
+from the choice of model.
+
+## New-user retention
+
+[`05_retention.sql`](ga4_bigquery/05_retention.sql) follows only users whose
+`first_visit` is in the export (a user first seen without one had visited
+before, and is not new), in whole Monday weeks with four weeks of follow-up:
+173,017 new users across nine cohorts. 3.8% come back the following week and
+0.9% in week four. December's cohorts come back half as often as November's
+(2.3% in week one for the week of 28 December, 5.0% for 30 November): gift
+buyers, not customers.
+
+Limits: the sample is obfuscated by Google (sources become `<Other>` or `(data
+deleted)`, which this analysis reports as their own channel rather than
+guessing), it covers three months, and the export predates GA4's session
+traffic-source fields, so a session's source is the first source parameter seen
+in it. The whole analysis, exploration included, read about 6.5 GB of the
+sandbox's free 1 TB a month.
 
 ---
 ---

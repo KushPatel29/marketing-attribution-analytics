@@ -1,0 +1,456 @@
+{
+  "what": "Every number the GA4 section of the README quotes, as BigQuery returned it, with the job that returned it.",
+  "dataset": "bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_* (Google Merchandise Store, GA4 export, obfuscated by Google)",
+  "engine": "BigQuery sandbox (no billing account), US multi-region, run from the BigQuery console",
+  "run_on": "2026-10-23",
+  "sql": "ga4_bigquery/0*.sql; each result below is the single JSON value its file's last statement returns",
+  "transcription_check": "the browser and this file hashed to the same SHA-256 (8cdeaf3c\u202628b5) over the compact JSON, after the console's narrow no-break spaces in the timestamps were normalised",
+  "session_table_build": {
+    "sql": "ga4_bigquery/01_sessions.sql",
+    "job_id": "eai6010m05kushp:US.job_jQiC1bsx07-g1-tnELarR3uaUolE",
+    "bytes_processed": "1.65 GB",
+    "created": "Oct 23, 2026, 7:48:49 PM UTC+5:30"
+  },
+  "built": {
+    "sql": "ga4_bigquery/01_sessions.sql",
+    "job_id": "eai6010m05kushp:US.job_BsvStd7j1CB5aOp7KTEQAfSd9lTT",
+    "bytes_processed": "12.59 MB",
+    "created": "Oct 23, 2026, 7:49:05 PM UTC+5:30",
+    "value": {
+      "sessions": 360129,
+      "users": 270154,
+      "transactions": 4451,
+      "transaction_revenue": 307640
+    }
+  },
+  "quality": {
+    "sql": "ga4_bigquery/02_quality.sql",
+    "job_id": "eai6010m05kushp:US.job_6bZmI8fWxEDy2xwxEDSKHLHtwLSG",
+    "bytes_processed": "997.91 MB",
+    "created": "Oct 23, 2026, 7:50:05 PM UTC+5:30",
+    "value": {
+      "events": 4295584,
+      "users": 270154,
+      "days": 92,
+      "first_day": "20201101",
+      "last_day": "20210131",
+      "sessions": 360129,
+      "session_start_events": 354970,
+      "events_without_session": 0,
+      "debug_mode_events": 3682991,
+      "purchase_events": 5692,
+      "purchase_id_null": 23,
+      "purchase_id_not_set": 883,
+      "transactions": 4451,
+      "duplicate_purchase_events": 335,
+      "transactions_sent_more_than_once": 326,
+      "purchase_revenue_null": 450,
+      "revenue_summed_over_every_purchase_event": 362165
+    }
+  },
+  "funnel": {
+    "sql": "ga4_bigquery/03_funnel.sql",
+    "job_id": "eai6010m05kushp:US.job_vNqv7VMivYmxOz5VB3qx4g9EWwF8",
+    "bytes_processed": "3.91 MB",
+    "created": "Oct 23, 2026, 7:52:23 PM UTC+5:30",
+    "value": {
+      "open_funnel": {
+        "sessions": 360129,
+        "view_item": 77020,
+        "add_to_cart": 15188,
+        "begin_checkout": 11106,
+        "add_shipping_info": 11105,
+        "add_payment_info": 6815,
+        "purchase": 4848
+      },
+      "strict_funnel": {
+        "view_item": 77020,
+        "add_to_cart": 15146,
+        "begin_checkout": 5293,
+        "add_shipping_info": 1222,
+        "add_payment_info": 775,
+        "purchase": 545
+      },
+      "as_tagged_funnel": {
+        "view_item": 77020,
+        "add_to_cart": 15146,
+        "checkout": 5294,
+        "add_payment_info": 3723,
+        "purchase": 2751
+      },
+      "tagging_order": {
+        "sessions_with_both_checkout_events": 11104,
+        "shipping_logged_before_begin_checkout": 6862,
+        "checkout_with_no_add_to_cart_in_session": 5145
+      },
+      "open_by_device": [
+        {
+          "device_category": "desktop",
+          "sessions": 208942,
+          "view_item": 44819,
+          "add_to_cart": 8790,
+          "purchase": 2749
+        },
+        {
+          "device_category": "mobile",
+          "sessions": 143185,
+          "view_item": 30501,
+          "add_to_cart": 6077,
+          "purchase": 1995
+        },
+        {
+          "device_category": "tablet",
+          "sessions": 8002,
+          "view_item": 1700,
+          "add_to_cart": 321,
+          "purchase": 104
+        }
+      ]
+    }
+  },
+  "attribution": {
+    "sql": "ga4_bigquery/04_attribution.sql",
+    "job_id": "eai6010m05kushp:US.job_y0qWSgD0EdbC7V9f5deWSloFQAHp",
+    "bytes_processed": "31.16 MB",
+    "created": "Oct 23, 2026, 7:53:33 PM UTC+5:30",
+    "value": {
+      "by_rule": [
+        {
+          "rule": "first_touch",
+          "channel": "Organic Search",
+          "revenue": 90375,
+          "transactions": 1244,
+          "share": 0.2938
+        },
+        {
+          "rule": "first_touch",
+          "channel": "Referral",
+          "revenue": 70878,
+          "transactions": 990,
+          "share": 0.2304
+        },
+        {
+          "rule": "first_touch",
+          "channel": "Obfuscated in the sample",
+          "revenue": 70681,
+          "transactions": 1120,
+          "share": 0.2298
+        },
+        {
+          "rule": "first_touch",
+          "channel": "Direct",
+          "revenue": 68191,
+          "transactions": 966,
+          "share": 0.2217
+        },
+        {
+          "rule": "first_touch",
+          "channel": "Paid Search",
+          "revenue": 7515,
+          "transactions": 131,
+          "share": 0.0244
+        },
+        {
+          "rule": "last_click",
+          "channel": "Referral",
+          "revenue": 167213,
+          "transactions": 2310,
+          "share": 0.5435
+        },
+        {
+          "rule": "last_click",
+          "channel": "Organic Search",
+          "revenue": 95392,
+          "transactions": 1483,
+          "share": 0.3101
+        },
+        {
+          "rule": "last_click",
+          "channel": "Direct",
+          "revenue": 21249,
+          "transactions": 287,
+          "share": 0.0691
+        },
+        {
+          "rule": "last_click",
+          "channel": "Obfuscated in the sample",
+          "revenue": 18974,
+          "transactions": 305,
+          "share": 0.0617
+        },
+        {
+          "rule": "last_click",
+          "channel": "Paid Search",
+          "revenue": 2986,
+          "transactions": 44,
+          "share": 0.0097
+        },
+        {
+          "rule": "last_click",
+          "channel": "Email",
+          "revenue": 1659,
+          "transactions": 20,
+          "share": 0.0054
+        },
+        {
+          "rule": "last_click",
+          "channel": "Affiliates",
+          "revenue": 167,
+          "transactions": 2,
+          "share": 0.0005
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Referral",
+          "revenue": 172461,
+          "transactions": 2365,
+          "share": 0.5606
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Organic Search",
+          "revenue": 99028,
+          "transactions": 1530,
+          "share": 0.3219
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Obfuscated in the sample",
+          "revenue": 23053,
+          "transactions": 352,
+          "share": 0.0749
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Direct",
+          "revenue": 8183,
+          "transactions": 135,
+          "share": 0.0266
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Paid Search",
+          "revenue": 3089,
+          "transactions": 47,
+          "share": 0.01
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Email",
+          "revenue": 1659,
+          "transactions": 20,
+          "share": 0.0054
+        },
+        {
+          "rule": "last_non_direct_click",
+          "channel": "Affiliates",
+          "revenue": 167,
+          "transactions": 2,
+          "share": 0.0005
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Organic Search",
+          "revenue": 134653,
+          "transactions": 2001,
+          "share": 0.4377
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Referral",
+          "revenue": 88560,
+          "transactions": 1240,
+          "share": 0.2879
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Direct",
+          "revenue": 47924,
+          "transactions": 660,
+          "share": 0.1558
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Obfuscated in the sample",
+          "revenue": 29358,
+          "transactions": 453,
+          "share": 0.0954
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Paid Search",
+          "revenue": 4884,
+          "transactions": 69,
+          "share": 0.0159
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Email",
+          "revenue": 2094,
+          "transactions": 26,
+          "share": 0.0068
+        },
+        {
+          "rule": "last_real_touch",
+          "channel": "Affiliates",
+          "revenue": 167,
+          "transactions": 2,
+          "share": 0.0005
+        }
+      ],
+      "revenue_share_that_moves": {
+        "first_touch_vs_last_click": 0.3354,
+        "last_click_vs_last_non_direct": 0.0425,
+        "first_touch_vs_last_non_direct": 0.3643,
+        "last_non_direct_vs_last_real_touch": 0.2727,
+        "first_touch_vs_last_real_touch": 0.2088
+      },
+      "self_referral_last_click": {
+        "revenue": 100254,
+        "transactions": 1343
+      },
+      "total": {
+        "revenue": 307640,
+        "transactions": 4451
+      }
+    }
+  },
+  "retention": {
+    "sql": "ga4_bigquery/05_retention.sql",
+    "job_id": "eai6010m05kushp:US.job_mDEqltVLQt6gTv-cMMBfQGiY3_M4",
+    "bytes_processed": "188.87 MB",
+    "created": "Oct 23, 2026, 7:54:19 PM UTC+5:30",
+    "value": {
+      "new_users_in_export": 257314,
+      "cohorts": [
+        {
+          "cohort_week": "2020-11-02",
+          "users": 16500,
+          "w1": 692,
+          "w2": 320,
+          "w3": 226,
+          "w4": 192,
+          "r1": 0.0419,
+          "r4": 0.0116
+        },
+        {
+          "cohort_week": "2020-11-09",
+          "users": 14590,
+          "w1": 822,
+          "w2": 343,
+          "w3": 246,
+          "w4": 256,
+          "r1": 0.0563,
+          "r4": 0.0175
+        },
+        {
+          "cohort_week": "2020-11-16",
+          "users": 16906,
+          "w1": 883,
+          "w2": 468,
+          "w3": 333,
+          "w4": 249,
+          "r1": 0.0522,
+          "r4": 0.0147
+        },
+        {
+          "cohort_week": "2020-11-23",
+          "users": 18734,
+          "w1": 858,
+          "w2": 396,
+          "w3": 245,
+          "w4": 113,
+          "r1": 0.0458,
+          "r4": 0.006
+        },
+        {
+          "cohort_week": "2020-11-30",
+          "users": 21195,
+          "w1": 1069,
+          "w2": 444,
+          "w3": 171,
+          "w4": 118,
+          "r1": 0.0504,
+          "r4": 0.0056
+        },
+        {
+          "cohort_week": "2020-12-07",
+          "users": 27558,
+          "w1": 850,
+          "w2": 230,
+          "w3": 169,
+          "w4": 263,
+          "r1": 0.0308,
+          "r4": 0.0095
+        },
+        {
+          "cohort_week": "2020-12-14",
+          "users": 24221,
+          "w1": 671,
+          "w2": 213,
+          "w3": 284,
+          "w4": 208,
+          "r1": 0.0277,
+          "r4": 0.0086
+        },
+        {
+          "cohort_week": "2020-12-21",
+          "users": 17013,
+          "w1": 414,
+          "w2": 188,
+          "w3": 160,
+          "w4": 92,
+          "r1": 0.0243,
+          "r4": 0.0054
+        },
+        {
+          "cohort_week": "2020-12-28",
+          "users": 16300,
+          "w1": 382,
+          "w2": 139,
+          "w3": 95,
+          "w4": 74,
+          "r1": 0.0234,
+          "r4": 0.0045
+        }
+      ],
+      "pooled": {
+        "users": 173017,
+        "week1": 0.0384,
+        "week4": 0.009
+      }
+    }
+  },
+  "reconcile": {
+    "sql": "ga4_bigquery/06_reconcile.sql",
+    "job_id": "eai6010m05kushp:US.job_z_cMogjO4lThOCpsz3VbXb3TNeJb",
+    "bytes_processed": "1,006 MB",
+    "created": "Oct 23, 2026, 7:55:46 PM UTC+5:30",
+    "value": {
+      "from_events": {
+        "sessions": 360129,
+        "users": 270154,
+        "view_item": 77020,
+        "add_to_cart": 15188,
+        "begin_checkout": 11106,
+        "purchase": 4848,
+        "transactions": 4451,
+        "transaction_revenue": 307640,
+        "transaction_item_revenue": 307562,
+        "transactions_where_items_disagree": 833,
+        "transactions_with_null_revenue": 0
+      },
+      "from_sessions": {
+        "sessions": 360129,
+        "users": 270154,
+        "view_item": 77020,
+        "add_to_cart": 15188,
+        "begin_checkout": 11106,
+        "purchase": 4848,
+        "transactions": 4451,
+        "transaction_revenue": 307640,
+        "transaction_item_revenue": 307562
+      }
+    }
+  }
+}
