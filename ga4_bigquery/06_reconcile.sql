@@ -51,6 +51,6 @@ from_sessions AS (
   FROM ga4_portfolio.sessions
 )
 SELECT TO_JSON_STRING(STRUCT(
-  (SELECT * FROM from_events) AS from_events,
-  (SELECT * FROM from_sessions) AS from_sessions
+  (SELECT f FROM from_events AS f) AS from_events,
+  (SELECT f FROM from_sessions AS f) AS from_sessions
 )) AS reconcile;
