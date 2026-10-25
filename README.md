@@ -681,7 +681,7 @@ python decisioning/build_decision_room.py           # governed allocation + sign
 python saas/gtm_metrics.py                         # CAC payback, magic number, LTV:CAC
 python analytics/make_visuals.py                   # docs/ charts
 
-python -m pytest -q                                # 128 tests
+python -m pytest -q                                # full suite; count checked against the badge
 streamlit run app/streamlit_app.py                 # the console
 ```
 
