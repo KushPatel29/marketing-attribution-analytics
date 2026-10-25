@@ -5,5 +5,7 @@ pandas==2.2.0
 numpy==1.26.3
 matplotlib==3.8.2
 altair==6.2.2
-streamlit==1.59.2
+streamlit==1.66.1
+# Pillow 13 fixes the image decoder advisories affecting earlier releases.
+pillow==13.0.0
 pytest==9.1.1
