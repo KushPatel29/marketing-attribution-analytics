@@ -55,7 +55,20 @@ st.markdown(
         padding: 0.9rem 1rem;
         box-shadow: 0 2px 8px rgba(18, 67, 109, 0.05);
     }
-    [data-testid="stMetricValue"] { font-size: 2rem; }
+    [data-testid="stMetricValue"] { font-size: clamp(1.35rem, 2.3vw, 2rem); }
+    /* KPI tiles wrap instead of ending in an ellipsis ("Position-based (40/20/40)"). */
+    :is([data-testid="stMetricLabel"], [data-testid="stMetricValue"],
+        [data-testid="stMetricDelta"]),
+    :is([data-testid="stMetricLabel"], [data-testid="stMetricValue"],
+        [data-testid="stMetricDelta"]) :is(div, p, span, label) {
+        white-space: normal !important; overflow: visible !important;
+        text-overflow: clip !important; overflow-wrap: anywhere;
+        height: auto !important; max-height: none !important;
+        -webkit-line-clamp: unset !important; line-height: 1.25;
+    }
+    div[data-testid="stMetric"] div:has(> [data-testid="stMetricDelta"]) {
+        overflow: visible; height: auto;
+    }
     .evidence-strip {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -160,12 +173,12 @@ if section == SECTIONS[0]:
 
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Paid-media envelope", f"${allocation_summary['current_budget']:,.0f}",
-              "held constant", delta_color="off")
+              "held constant", delta_color="off", delta_arrow="off")
     c2.metric("Modelled order uplift",
               f"{allocation_summary['expected_order_uplift_pct']:.1f}%",
-              "not yet realized", delta_color="off")
-    c3.metric("Calibrated coverage", "1 / 4", "3 test-gated", delta_color="off")
-    c4.metric("Release posture", "Conditional", "approval", delta_color="off")
+              "not yet realized", delta_color="off", delta_arrow="off")
+    c3.metric("Calibrated coverage", "1 / 4", "3 test-gated", delta_color="off", delta_arrow="off")
+    c4.metric("Release posture", "Conditional", "approval", delta_color="off", delta_arrow="off")
 
     st.warning(
         "**Decision boundary:** paid search is calibrated to the synthetic geo holdout. "
@@ -367,11 +380,13 @@ if section == SECTIONS[1]:
     )
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Best model", MODEL_LABELS[best["model"]], f"{best['mae_share_points']:.2f} pts MAE")
+    c1.metric("Best model", MODEL_LABELS[best["model"]], f"{best['mae_share_points']:.2f} pts MAE",
+              delta_arrow="off")
     c2.metric("Worst model", MODEL_LABELS[worst["model"]],
-              f"{worst['mae_share_points']:.2f} pts MAE", delta_color="inverse")
+              f"{worst['mae_share_points']:.2f} pts MAE", delta_color="inverse",
+              delta_arrow="off")
     c3.metric("Last-touch credit to 'direct'", f"{100 * direct_lt:.1f}%")
-    c4.metric("Its true share", f"{100 * direct_true:.1f}%", delta_color="off")
+    c4.metric("Its true share", f"{100 * direct_true:.1f}%", delta_color="off", delta_arrow="off")
 
     st.info(
         f"**No model recovers the truth.** The best is "
@@ -567,9 +582,10 @@ if section == SECTIONS[4]:
     c1.metric("Planted truth", f"{100 * true_lift:.2f}%")
     c2.metric("Difference-in-differences", f"{100 * did['estimated_lift']:.2f}%",
               f"95% CI {100 * did['ci_low']:.2f}% – {100 * did['ci_high']:.2f}%",
-              delta_color="off")
+              delta_color="off", delta_arrow="off")
     c3.metric("Naive pre/post", f"{100 * naive['estimated_lift']:.2f}%",
-              "overstates the effect", delta_color="inverse")
+              "overstates the effect", delta_color="inverse",
+              delta_arrow="off")
 
     if bool(did["covers_truth"]):
         st.success(
@@ -620,9 +636,9 @@ if section == SECTIONS[5]:
     ent = coverage[coverage["segment"] == "Enterprise"].iloc[0]
     c1, c2, c3 = st.columns(3)
     c1.metric("SMB coverage", f"{smb['coverage_ratio']:.2f}x",
-              f"needs {smb['required_coverage']:.2f}x", delta_color="off")
+              f"needs {smb['required_coverage']:.2f}x", delta_color="off", delta_arrow="off")
     c2.metric("Enterprise coverage", f"{ent['coverage_ratio']:.2f}x",
-              f"needs {ent['required_coverage']:.2f}x", delta_color="off")
+              f"needs {ent['required_coverage']:.2f}x", delta_color="off", delta_arrow="off")
     # Escaped: Streamlit renders an unescaped $...$ pair as inline LaTeX.
     c3.metric("Ending ARR", f"\\${waterfall['ending_arr'].iloc[-1]:,.0f}")
 
@@ -717,9 +733,11 @@ if section == SECTIONS[6]:
 
     c1, c2, c3 = st.columns(3)
     c1.metric(f"{best_seg['segment']} LTV:CAC", f"{best_seg['ltv_to_cac']:.2f}",
-              f"payback {best_seg['cac_payback_months']:.1f} mo", delta_color="off")
+              f"payback {best_seg['cac_payback_months']:.1f} mo", delta_color="off",
+              delta_arrow="off")
     c2.metric(f"{worst_seg['segment']} LTV:CAC", f"{worst_seg['ltv_to_cac']:.2f}",
-              f"payback {worst_seg['cac_payback_months']:.1f} mo", delta_color="inverse")
+              f"payback {worst_seg['cac_payback_months']:.1f} mo", delta_color="inverse",
+              delta_arrow="off")
     c3.metric("Magic number (latest quarter)", f"{magic['magic_number'].iloc[-1]:.2f}")
 
     st.warning(
